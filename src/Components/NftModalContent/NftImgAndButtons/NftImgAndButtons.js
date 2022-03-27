@@ -1,4 +1,4 @@
-import React, from 'react';
+import React from 'react';
 import {StyleSheet, View, Image} from 'react-native';
 
 import {SIZE} from '../../../constants';
