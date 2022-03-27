@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "606805167299",
+    "project_id": "nftlive-21d76",
+    "storage_bucket": "nftlive-21d76.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:606805167299:android:dbf727b53f4c1a9103e676",
+        "android_client_info": {
+          "package_name": "com.nftlive"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "606805167299-jq9a51bmguu3v5jduesr537jg0e2hbvu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCR2LOAQ7Mqg90Voo5Y7_bBFZF9rpEh8AM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "606805167299-jq9a51bmguu3v5jduesr537jg0e2hbvu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
