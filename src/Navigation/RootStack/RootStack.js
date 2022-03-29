@@ -10,6 +10,7 @@ import {
 import {PinCodeScreen, SendMessageScreen, WatchUserDetailScreen} from '../../Screens';
 import BottomStackNav from '../BottomStack/BottomStack';
 import LoadingScreen from '../../Screens/LoadingScreen/LoadingScreen';
+import {navigationConstants} from '../../constants';
 
 const RootStack = createStackNavigator();
 
@@ -35,16 +36,15 @@ const RootStackNav = () => {
     // if (isEntry === null) {
     //     return <LoadingScreen />;
     // }
+
     return (
         <RootStack.Navigator
             // initialRouteName={isEntry ? 'PinCodeScreen' : 'OnboardingStackNav'}
-            screenOptions={{
-                headerShown: false,
-            }}>
+            screenOptions={navigationConstants.headerShownFalse}>
             <RootStack.Screen
                 name="OnboardingStack"
                 component={OnboardingStackNav}
-                options={{gestureDirection: 'vertical'}}
+                options={navigationConstants.gestureDirectionVertical}
             />
             {/*<RootStack.Screen*/}
             {/*    name="BottomStackNav"*/}

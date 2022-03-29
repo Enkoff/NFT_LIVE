@@ -68,5 +68,4 @@ export const FAQ_GRADIENT = {
     lightBlue: '#5DA8FF',
     blue: '#2663FF',
     lightGreen: '#20DE9A'
-
 }

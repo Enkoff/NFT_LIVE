@@ -1,6 +1,5 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {avatarsBgColorsService, avatarsService} from '../../services';
-import {THEME} from '../../constants';
 
 const initialState = {
     avatars: [],
@@ -42,7 +41,7 @@ const avatarCarouselSlice = createSlice({
             const {uploadImagePath} = action.payload;
             state.uploadImage = uploadImagePath;
         },
-        deleteUploadImage: (state, action) => {
+        deleteUploadImage: (state) => {
             state.uploadImage = null;
         },
         changeAvatarColor: (state, action) => {

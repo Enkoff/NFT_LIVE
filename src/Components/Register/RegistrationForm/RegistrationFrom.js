@@ -1,19 +1,16 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Formik} from 'formik';
+import {useDispatch} from 'react-redux';
 
 import {SIZE} from '../../../constants';
-import ContinueBtn from '../ContinueBtn/ContinueBtn';
 import {registrationValidationScheme} from '../../../config';
-import {useDispatch} from 'react-redux';
+import ContinueBtn from '../ContinueBtn/ContinueBtn';
 import {CustomTextInput} from '../../index';
 
 const RegistrationFrom = () => {
-    const dispatch = useDispatch();
-
     const submit = (values) => {
         console.log('ВІДПРАВКА ДАННИХ НА БЕК', values);
-
     };
 
     return (
@@ -31,7 +28,6 @@ const RegistrationFrom = () => {
                          handleSubmit,
                          values,
                          touched,
-                         isValid,
                          errors
                      }) => (
                         <View style={styles.inputWrapper}>

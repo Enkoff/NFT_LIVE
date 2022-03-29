@@ -1,17 +1,15 @@
 import React, {useEffect, useCallback} from 'react';
 import Carousel from 'react-native-snap-carousel';
-import {
-    View,
-    StyleSheet,
-} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 
+import {SIZE} from '../../../constants';
 import AvatarCarouselRenderItem from '../AvatarCarouselRenderItem/AvatarCarouselRenderItem';
 import {getAvatarsAndBgColorsThunk} from '../../../Redux/slices';
-import {SIZE} from '../../../constants';
 
 const AvatarCarousel = ({setIsPopup, isPopup, carouselRef, isEditProfile = false}) => {
     const dispatch = useDispatch();
+
     const {avatars, uploadImage, centerItem} = useSelector(state => state['avatar']);
 
     useEffect(() => {
