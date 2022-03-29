@@ -15,6 +15,7 @@ export const getAvatarsAndBgColorsThunk = createAsyncThunk(
     'avatarCarouselSlice/getAvatarsAndBgColorsThunk',
     async (_, {rejectWithValue}) => {
         try {
+            console.log('popal');
             let avatars = await avatarsService.getAll;
 
             const girlsArray = avatars.filter(item => item['sex'] === 'girl');

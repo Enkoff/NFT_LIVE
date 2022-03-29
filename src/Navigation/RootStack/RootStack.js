@@ -19,9 +19,7 @@ const RootStackNav = () => {
         dispatch(getFirsEntryThunk());
     }, [dispatch]);
 
-    if (isFirstEntry === null) {
-        return <LoadingScreen/>;
-    }
+    if (isFirstEntry === null) return <LoadingScreen/>
 
     return (
         <RootStack.Navigator

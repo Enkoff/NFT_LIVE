@@ -6,11 +6,31 @@ import {getFullDate} from '../config/module/getFullDate';
 
 //ПЕРЕПИСАТИ DELETE MESSAGE BADGE
 export const userService = {
-    getUser: (uid) => firestore()
+    getUserByUid: (uid) => firestore()
         .collection(firestoreLib.users.collection)
         .doc(uid)
         .get()
         .then(res => res.data()),
+    getUserGalleryById: async (uid) => {
+        const res = (await firestore()
+            .collection(firestoreLib.nft.collection)
+            .where(firestoreLib.where.authorId, '==', uid)
+            .orderBy(firestoreLib.orderBy.createDate, 'asc')
+            .get()).docs;
+        const respData = [];
+        res.forEach(nft => {
+            respData.push(nft.data());
+        });
+        return respData;
+    },
+    updateUserInfoByUid: async (uid, fields) => {
+        const {name, nikName, email, bio} = fields;
+        await firestore()
+            .collection(firestoreLib.users.collection)
+            .doc(uid)
+            .update({name, nikName, email, bio});
+    },
+    ////////////////////
     addAndDeleteGalleryItem: (uid, galleryItem, isAdd) => firestore()
         .collection(firestoreLib.users.collection)
         .doc(uid)
@@ -96,10 +116,6 @@ export const userService = {
             .doc(uid)
             .update({avatarUrl, avatarBackground, oldAvatarFileName: pathStorage});
     },
-    updateUserInfo: (uid, name, nikName, email, bio) => firestore()
-        .collection(firestoreLib.users.collection)
-        .doc(uid)
-        .update({name, nikName, email, bio}),
     addAndDeleteCollectionName: (uid, collectionNameObj, isAdd) => firestore()
         .collection(firestoreLib.users.collection)
         .doc(uid)
@@ -313,12 +329,6 @@ export const userService = {
         });
     },
     //ПЕРЕВІРИТИ МОЖЛИВО ВИПРАВИТИ СЕРВІСИ!!!!!
-    getGalleryByAuthorId: (id) => firestore()
-        .collection(firestoreLib.users.collection)
-        .doc(id)
-        .get()
-        .then(res => res.data())
-        .then(res => res[firestoreLib.users.gallery]),
     deleteMessageBadge: async (uid = 'iyJyDVnOOeeFAgwKELdIMmst5yV2') => {
         const pushMessage = await firestore()
             .collection(firestoreLib.users.collection)

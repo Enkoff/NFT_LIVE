@@ -48,4 +48,13 @@ export const firestoreLib = {
         subscriptions: 'subscriptions',
         subscribers: 'subscribers'
     },
+    orderBy: {
+        soldSum: 'soldSum',
+        createDate: 'createDate',
+        desc: 'desc'
+    },
+    where: {
+        isNftLiveTop: 'isNftLiveTop',
+        authorId: 'authorId'
+    }
 };

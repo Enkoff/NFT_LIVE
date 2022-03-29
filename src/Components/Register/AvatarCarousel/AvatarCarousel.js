@@ -13,9 +13,7 @@ const AvatarCarousel = ({setIsPopup, isPopup, carouselRef, isEditProfile = false
     const {avatars, uploadImage, centerItem} = useSelector(state => state['avatar']);
 
     useEffect(() => {
-        if (avatars.length === 0) {
-            dispatch(getAvatarsAndBgColorsThunk());
-        }
+        if (avatars.length === 0) dispatch(getAvatarsAndBgColorsThunk());
     }, [dispatch]);
 
     const renderItem = useCallback(({item, index, parallaxProps}) => {
