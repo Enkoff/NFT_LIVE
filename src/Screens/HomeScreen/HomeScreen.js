@@ -10,11 +10,12 @@ import {
     RootScreenTemplate
 } from '../../Components';
 import LoadingScreen from '../LoadingScreen/LoadingScreen';
+import {setFirsEntryThunk} from '../../Redux/slices/auth.slice';
 
 const HomeScreen = () => {
     const dispatch = useDispatch();
 
-    const {uid} = useSelector(state => state['auth']);
+    const {uid, isFirstEntry} = useSelector(state => state['auth']);
     const {user} = useSelector(state => state['user']);
     const {nftLiveTop} = useSelector(state => state['nft']);
 
@@ -27,6 +28,10 @@ const HomeScreen = () => {
     useEffect(() => {
         currentModalItem && setCurrentModalItem(filterData[filterData.findIndex(item => item.id === currentModalItem.id)]);
     }, [filterData, user]);
+
+    useEffect(() => {
+        !isFirstEntry && dispatch(setFirsEntryThunk());
+    }, []);
 
     useEffect(() => {
         if (uid) dispatch(getUserThunk(uid));

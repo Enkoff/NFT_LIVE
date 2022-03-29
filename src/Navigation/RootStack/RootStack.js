@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {createStackNavigator,} from '@react-navigation/stack';
+import {useDispatch, useSelector} from 'react-redux';
 
 import {navigationConstants} from '../../constants';
-import {firstEntry} from '../../config';
+import {getFirsEntryThunk} from '../../Redux/slices/auth.slice';
 import {CreateNftStackNav, OnboardingStackNav, ProfileStackNav} from '../index';
 import {PinCodeScreen, SendMessageScreen, WatchUserDetailScreen} from '../../Screens';
 import BottomStackNav from '../BottomStack/BottomStack';
@@ -11,11 +12,12 @@ import LoadingScreen from '../../Screens/LoadingScreen/LoadingScreen';
 const RootStack = createStackNavigator();
 
 const RootStackNav = () => {
-    const [isFirstEntry, setIsFirstEntry] = useState(null);
+    const dispatch = useDispatch();
+    const {isFirstEntry} = useSelector(state => state['auth']);
 
     useEffect(() => {
-        firstEntry().then(isFirstEntry => setIsFirstEntry(isFirstEntry));
-    }, []);
+        dispatch(getFirsEntryThunk());
+    }, [dispatch]);
 
     if (isFirstEntry === null) {
         return <LoadingScreen/>;
