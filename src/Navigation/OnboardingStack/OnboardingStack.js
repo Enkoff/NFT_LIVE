@@ -10,40 +10,30 @@ import {
 
 const OnboardingStack = createStackNavigator();
 
-const OnboardingStackNav = (props) => {
+const OnboardingStackNav = () => {
     return (
         <OnboardingStack.Navigator
             initialRouteName={'OnboardingScreen'}
-            screenOptions={{
-                headerShown: false,
-            }}>
+            screenOptions={{headerShown: false}}>
             <OnboardingStack.Screen
                 name="OnboardingScreen"
                 component={OnboardingScreen}
-                options={{
-                    gestureDirection: 'vertical',
-                }}
+                options={{gestureDirection: 'vertical'}}
             />
             <OnboardingStack.Screen
                 name="RegisterScreen"
                 component={RegisterScreen}
-                options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-                }}
+                options={{cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS}}
             />
             <OnboardingStack.Screen
                 name="SetPinCodeScreen"
                 component={SetPinCodeScreen}
-                options={{
-                    gestureDirection: 'vertical',
-                }}
+                options={{gestureDirection: 'vertical'}}
             />
             <OnboardingStack.Screen
                 name="PinCodeScreen"
                 component={PinCodeScreen}
-                options={{
-                    gestureDirection: 'vertical',
-                }}
+                options={{gestureDirection: 'vertical'}}
             />
         </OnboardingStack.Navigator>
     );

@@ -13,80 +13,69 @@ import LoadingScreen from '../../Screens/LoadingScreen/LoadingScreen';
 
 const RootStack = createStackNavigator();
 
+const defaultOptions = {
+    gestureDirection: 'vertical'
+}
+
 const RootStackNav = () => {
-    const [isEntry, setIsEntry] = useState(null);
-
-    const firstStart = async () => {
-        const isEntry = await AsyncStorage.getItem('firstEnter');
-        if (!isEntry) {
-            setIsEntry(false);
-        }
-        setIsEntry(true);
-    };
-
-    useEffect(() => {
-        firstStart();
-    }, []);
-
-    if (isEntry === null) {
-        return <LoadingScreen />;
-    }
-
+    // const [isEntry, setIsEntry] = useState(null);
+    //
+    // const firstStart = async () => {
+    //     const isEntry = await AsyncStorage.getItem('firstEnter');
+    //     if (!isEntry) {
+    //         setIsEntry(false);
+    //     }
+    //     setIsEntry(true);
+    // };
+    //
+    // useEffect(() => {
+    //     firstStart();
+    // }, []);
+    //
+    // if (isEntry === null) {
+    //     return <LoadingScreen />;
+    // }
     return (
         <RootStack.Navigator
-            initialRouteName={isEntry ? 'PinCodeScreen' : 'OnboardingStackNav'}
+            // initialRouteName={isEntry ? 'PinCodeScreen' : 'OnboardingStackNav'}
             screenOptions={{
                 headerShown: false,
             }}>
             <RootStack.Screen
                 name="OnboardingStack"
                 component={OnboardingStackNav}
-                options={{
-                    gestureDirection: 'vertical',
-                }}
+                options={{gestureDirection: 'vertical'}}
             />
-            <RootStack.Screen
-                name="BottomStackNav"
-                component={BottomStackNav}
-                options={{
-                    gestureDirection: 'vertical',
-                }}
-            />
-            <RootStack.Screen
-                name="ProfileStackNav"
-                component={ProfileStackNav}
-                options={{
-                    gestureDirection: 'vertical',
-                }}
-            />
-            <RootStack.Screen
-                name="CreateNftStackNav"
-                component={CreateNftStackNav}
-                options={{
-                    gestureDirection: 'vertical',
-                }}
-            />
-            <RootStack.Screen
-                name="WatchUserDetailScreen"
-                component={WatchUserDetailScreen}
-                options={{
-                    gestureDirection: 'vertical',
-                }}
-            />
-            <RootStack.Screen
-                name="SendMessageScreen"
-                component={SendMessageScreen}
-                options={{
-                    gestureDirection: 'vertical',
-                }}
-            />
-            <RootStack.Screen
-                name="PinCodeScreen"
-                component={PinCodeScreen}
-                options={{
-                    gestureDirection: 'vertical',
-                }}
-            />
+            {/*<RootStack.Screen*/}
+            {/*    name="BottomStackNav"*/}
+            {/*    component={BottomStackNav}*/}
+            {/*    options={{gestureDirection: 'vertical'}}*/}
+            {/*/>*/}
+            {/*<RootStack.Screen*/}
+            {/*    name="ProfileStackNav"*/}
+            {/*    component={ProfileStackNav}*/}
+            {/*    options={{gestureDirection: 'vertical'}}*/}
+            {/*/>*/}
+            {/*<RootStack.Screen*/}
+            {/*    name="CreateNftStackNav"*/}
+            {/*    component={CreateNftStackNav}*/}
+            {/*    options={{gestureDirection: 'vertical'}}*/}
+            {/*/>*/}
+            {/*<RootStack.Screen*/}
+            {/*    name="WatchUserDetailScreen"*/}
+            {/*    component={WatchUserDetailScreen}*/}
+            {/*    options={{gestureDirection: 'vertical'}}*/}
+            {/*/>*/}
+            {/*<RootStack.Screen*/}
+            {/*    name="SendMessageScreen"*/}
+            {/*    component={SendMessageScreen}*/}
+            {/*    options={{gestureDirection: 'vertical'}}*/}
+            {/*/>*/}
+            {/*<RootStack.Screen*/}
+            {/*    name="PinCodeScreen"*/}
+            {/*    component={PinCodeScreen}*/}
+            {/*    options={{gestureDirection: 'vertical'}}*/}
+            {/*/>*/}
         </RootStack.Navigator>
     );
 };

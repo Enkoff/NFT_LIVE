@@ -6,10 +6,10 @@ import {
     KeyboardASV,
     RegisterTopButton
 } from '../../Components/Register';
-import {CustomModal, RootModal} from '../../Components';
+import {CustomModal} from '../../Components';
 import RegistrationFrom from '../../Components/Register/RegistrationForm/RegistrationFrom';
 
-const RegisterScreen = (props) => {
+const RegisterScreen = () => {
     const [isPopup, setIsPopup] = useState(false);
     const carouselRef = useRef(null);
 

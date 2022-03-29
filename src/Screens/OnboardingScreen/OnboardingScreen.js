@@ -1,26 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
-
-import {Button, Mask, OnboardingBottomLinerGradient, OnboardingCarousel} from '../../Components/Onboarding';
 
 import {THEME} from '../../constants';
-import {OnboardingHeader} from '../../Components';
-import {getOnboardingThunk} from '../../Redux/slices/onboarding.slice';
+import {Button, Mask, OnboardingBottomLinerGradient} from '../../Components/Onboarding';
+import OnboardingSmartComponent from '../../Components/Onboarding/OnboardingSmartComponent/OnboardingSmartComponent';
 
 const OnboardingScreen = () => {
-    const dispatch = useDispatch();
-    const {onboarding} = useSelector((state) => state['onboarding']);
-    const [currentIndex, setCurrentIndex] = useState(0);
-
-    useEffect(() => {
-        dispatch(getOnboardingThunk());
-    }, [dispatch]);
-
     return (
         <View style={styles.wrapper}>
-            <OnboardingHeader data={onboarding} currentIndex={currentIndex}/>
-            <OnboardingCarousel data={onboarding} setCurrentIndex={setCurrentIndex}/>
+            <OnboardingSmartComponent />
             <OnboardingBottomLinerGradient/>
             <Mask/>
             <Button/>

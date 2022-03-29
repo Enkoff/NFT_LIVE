@@ -9,9 +9,9 @@ const initialState = {
 
 export const getOnboardingThunk = createAsyncThunk(
     'onboardingSlice/getOnboardingThunk',
-    async (_, {dispatch, rejectWithValue}) => {
+    async (_, {rejectWithValue}) => {
         try {
-            return await onboardingService.getAll;
+            return await onboardingService.get;
         } catch (e) {
             return rejectWithValue(e.message);
         }

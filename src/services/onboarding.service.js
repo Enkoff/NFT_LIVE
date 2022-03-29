@@ -2,7 +2,7 @@ import {firestore} from '../config/firebase/firebase.config';
 import {firestoreLib} from '../constants';
 
 export const onboardingService = {
-    getAll: firestore()
+    get: firestore()
         .collection(firestoreLib.onboarding.collection)
         .doc(firestoreLib.onboarding.doc)
         .get()

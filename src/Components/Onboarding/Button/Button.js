@@ -2,8 +2,8 @@ import React from 'react';
 import {StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
-import CustomButton from '../../CustomBotton/CustomButton';
 import {SIZE} from '../../../constants';
+import CustomButton from '../../CustomBotton/CustomButton';
 
 const Button = () => {
     const navigation = useNavigation();
