@@ -1,9 +1,9 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 
+import {SIZE} from '../../../constants';
 import Avatar from '../../Avatar/Avatar';
 import Search from '../../Search/Search';
-import {SIZE} from '../../../constants';
 
 const HomeHeader = ({setFilterData}) => {
     return (

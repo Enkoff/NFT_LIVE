@@ -2,23 +2,11 @@ import {firestore} from '../config/firebase/firebase.config';
 import {firestoreLib} from '../constants';
 
 export const nftLiveTopService = {
-    getNftLiveTopByLimit: (async limit => {
-        const res = (await firestore()
-            .collection(firestoreLib.nft.collection)
-            .orderBy('ethPrice')
-            .limit(limit)
-            .where('isNftLiveTop', '==', true)
-            .get()).docs;
-        const respData = [];
-        res.forEach(nft => {
-            respData.push(nft.data());
-        });
-        return respData;
-    }),
     getNftLiveTopByStartAfter: async (startAfter, limit, callback) => {
         const res = (await firestore()
             .collection(firestoreLib.nft.collection)
-            .orderBy('ethPrice')
+            .orderBy('soldSum', 'desc')
+            .orderBy('createDate', 'desc')
             .startAfter(startAfter)
             .limit(limit)
             .where('isNftLiveTop', '==', true)

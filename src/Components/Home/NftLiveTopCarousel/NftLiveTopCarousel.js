@@ -1,9 +1,9 @@
 import React from 'react';
 import {StyleSheet, View, FlatList} from 'react-native';
 
+import {SIZE} from '../../../constants';
 import CustomText from '../../CustomText/CustomText';
 import {NftLiveTopCarouselRenderItem} from '../index';
-import {SIZE} from '../../../constants';
 import CarouselFooterLoader from '../CarouselFooterLoader/CarouselFooterLoader';
 
 const NftLiveTopCarousel = (
@@ -31,7 +31,7 @@ const NftLiveTopCarousel = (
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 onEndReached={() => onEndReached(data[data.length - 1].ethPrice)}
-                ListFooterComponent={isNextDataLoading && <CarouselFooterLoader/>}
+                // ListFooterComponent={isNextDataLoading && <CarouselFooterLoader/>}
             />
         </View>
     );

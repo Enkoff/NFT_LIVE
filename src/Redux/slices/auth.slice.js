@@ -1,7 +1,8 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {authService, onboardingService} from '../../services';
+import {authService} from '../../services';
 
 const initialState = {
+    isFirstEntry: null,
     uid: null,
     isLoading: false,
     error: null
@@ -9,7 +10,7 @@ const initialState = {
 
 export const getUidThunk = createAsyncThunk(
     'authSlice/getUidThunk',
-    async (pinCode, {dispatch, rejectWithValue}) => {
+    async (pinCode, {_, rejectWithValue}) => {
         try {
             return await authService.getUid(pinCode);
         } catch (e) {

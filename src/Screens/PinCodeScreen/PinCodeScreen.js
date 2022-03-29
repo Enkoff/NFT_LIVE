@@ -8,12 +8,14 @@ import LoadingScreen from '../LoadingScreen/LoadingScreen';
 const PinCodeScreen = ({navigation}) => {
     const [isConnect, setIsConnect] = useState(false);
 
+    //ПЕРЕПИСАТИ ДЛЯ РЕАЛЬНОГО ПРОЕКТУ
     const handleResultEnterPin = (pin) => {
         if (pin === '111111' || pin === '222222') {
             navigation.navigate('BottomStackNav', {pin});
         }
     };
 
+    //ВИДАЛИТИ В МАЙБУТЬНБОМУ ШТУЧНА ЗАТРИМКА
     useEffect(() => {
         setTimeout(() => {
             setIsConnect(true);
@@ -31,8 +33,6 @@ const PinCodeScreen = ({navigation}) => {
                 status={'enter'}
                 touchIDDisabled={true}
                 stylePinCodeDeleteButtonText={{display: 'none'}}
-                // finishProcess={finishProcess}
-                // onFail={onFail}
                 handleResultEnterPin={handleResultEnterPin}
                 colorCircleButtons={'rgba(255, 255, 255, 0.05)'}
                 colorPassword={'#25C5AB'}

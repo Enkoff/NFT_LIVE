@@ -1,8 +1,11 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {StyleSheet} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {useDispatch, useSelector} from 'react-redux';
+
+import {SIZE, THEME} from '../../constants';
+import {snapshotService} from '../../services';
+import {getUidThunk} from '../../Redux/slices/auth.slice';
 
 import {ChatScreen, HomeScreen, SearchScreen} from '../../Screens';
 import {NotificationStackNav} from '../index';
@@ -14,37 +17,28 @@ import {
     SearchIcon,
     tabBarBadgeStyle
 } from '../../Components/TabIcons';
-import {SIZE, THEME} from '../../constants';
 import {PlusSvg} from '../../Components/SVG';
-import {snapshotService} from '../../services';
-import {getUidThunk} from '../../Redux/slices/auth.slice';
 
 const Tab = createBottomTabNavigator();
 
-const createNft = () => null;
+const CreateNft = () => null;
 
 const BottomStackNav = ({route: {params}}) => {
     const dispatch = useDispatch();
-
+    const {uid} = useSelector(state => state['auth']);
     const [messagesBadge, setMessagesBadge] = useState(null);
     const [notificationBadge, setNotificationBadge] = useState(null);
-
-    const {uid} = useSelector(state => state['auth']);
 
     useEffect(() => {
         dispatch(getUidThunk(params.pin));
     }, []);
 
     useEffect(() => {
-        if (uid) {
-            return snapshotService.getMessageBadge(uid, setNotificationBadge);
-        }
+        if (uid) return snapshotService.getMessageBadge(uid, setNotificationBadge);
     }, [uid]);
 
     useEffect(() => {
-        if (uid) {
-            return snapshotService.getAllNotShowChatsMessageBadge(uid, setMessagesBadge);
-        }
+        if (uid) return snapshotService.getAllNotShowChatsMessageBadge(uid, setMessagesBadge);
     }, [uid]);
 
     return (
@@ -77,7 +71,7 @@ const BottomStackNav = ({route: {params}}) => {
                 />
                 <Tab.Screen
                     name="CreateNft"
-                    component={createNft}
+                    component={CreateNft}
                     options={{
                         headerShown: false,
                         tabBarIcon: () => <PlusSvg width={SIZE.height.h35} height={SIZE.height.h35}/>,

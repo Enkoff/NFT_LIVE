@@ -3,6 +3,7 @@ import {configureStore} from '@reduxjs/toolkit';
 import {
     authReducer,
     avatarCarouselReducer,
+    nftReducer,
     nftLiveTopReducer,
     onboardingReducer,
     userReducer,
@@ -18,7 +19,8 @@ const store = configureStore({
         auth: authReducer,
         nftLiveTop: nftLiveTopReducer,
         faq: faqReducer,
-        publish: publishReducer
+        publish: publishReducer,
+        nft: nftReducer
     },
     middleware: getDefaultMiddleware => getDefaultMiddleware({
         serializableCheck: false

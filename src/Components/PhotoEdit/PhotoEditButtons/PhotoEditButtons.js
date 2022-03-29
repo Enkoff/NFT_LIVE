@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
-// import {PESDK} from 'react-native-photoeditorsdk';
+import {PESDK} from 'react-native-photoeditorsdk';
 
 import {SIZE, THEME} from '../../../constants';
 import {ButtonTextIcon} from '../../index';
@@ -10,11 +10,11 @@ const PhotoEditButtons = ({changeUploadImgPath, uploadImgPath, setIsSubscribeMod
     const [isActiveBtn, setIsActiveBtn] = useState({light: true, pro: false});
 
     const openEditor = () => {
-        // PESDK.openEditor(uploadImgPath).then(res => {
-        //     if (res !== null) {
-        //         changeUploadImgPath(res.image);
-        //     }
-        // });
+        PESDK.openEditor(uploadImgPath).then(res => {
+            if (res !== null) {
+                changeUploadImgPath(res.image);
+            }
+        });
     };
 
     const lightEditHandler = () => {

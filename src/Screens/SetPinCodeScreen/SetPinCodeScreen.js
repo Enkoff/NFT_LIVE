@@ -5,11 +5,6 @@ import PINCode from "@haskkor/react-native-pincode";
 import {CenterLinerGradient} from '../../Components';
 
 const SetPinCodeScreen = ({navigation}) => {
-
-    const finishProcess = () => {
-        navigation.navigate('PinCodeScreen');
-    }
-
     return (
         <View style={styles.screen}>
             <CenterLinerGradient />
@@ -17,7 +12,7 @@ const SetPinCodeScreen = ({navigation}) => {
                 status={'choose'}
                 touchIDDisabled={true}
                 stylePinCodeDeleteButtonText={{display: 'none'}}
-                finishProcess={finishProcess}
+                finishProcess={() => navigation.navigate('PinCodeScreen')}
                 colorCircleButtons={'rgba(255, 255, 255, 0.05)'}
                 colorPassword={'#25C5AB'}
                 colorPasswordEmpty={'rgba(255, 255, 255, 0.6)'}

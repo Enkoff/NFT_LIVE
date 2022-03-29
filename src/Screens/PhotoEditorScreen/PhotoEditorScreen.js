@@ -17,7 +17,6 @@ import {
 import {RootModal, SubscribeModal} from '../../Components';
 import {getPublishThunk} from '../../Redux/slices';
 
-
 const PhotoEditorScreen = ({route: {params: {formData}}}) => {
     const {uploadImage} = formData;
     const dispatch = useDispatch();
@@ -46,13 +45,13 @@ const PhotoEditorScreen = ({route: {params: {formData}}}) => {
             <BackgroundLeftGradient/>
             <BackgroundRightGradient/>
             <PhotoEditHeader formData={formData}/>
-            {/*<PhotoEditUploadImg imgPath={imgPath}/>*/}
-            {/*<PhotoEditButtons changeUploadImgPath={changeUploadImgPath} uploadImgPath={imgPath} setIsSubscribeModal={setIsSubscribeModal}/>*/}
-            {/*<PhotoEditorBottomButton formData={formData}/>*/}
-            {/*/!*ВИДАЛИТИ МОДАЛ*!/*/}
-            {/*<RootModal visible={isSubscribeModal} animatedType={'slide'}>*/}
-            {/*    <SubscribeModal setIsModal={setIsSubscribeModal}/>*/}
-            {/*</RootModal>*/}
+            <PhotoEditUploadImg imgPath={imgPath}/>
+            <PhotoEditButtons changeUploadImgPath={changeUploadImgPath} uploadImgPath={imgPath} setIsSubscribeModal={setIsSubscribeModal}/>
+            <PhotoEditorBottomButton formData={formData}/>
+            {/*ВИДАЛИТИ МОДАЛ*/}
+            <RootModal visible={isSubscribeModal} animatedType={'slide'}>
+                <SubscribeModal setIsModal={setIsSubscribeModal}/>
+            </RootModal>
         </View>
     );
 };

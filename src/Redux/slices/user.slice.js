@@ -4,6 +4,7 @@ import {userService} from '../../services';
 import {addAvatarToFirebaseStorage} from '../../config/firebase';
 import {collectionNameModel} from '../../model';
 import {subscriptionsAndSubscribersModel} from '../../model/subscriptionsAndSubscribersModel/subscriptionsAndSubscribersModel';
+import {setFirstEntry} from '../../config';
 
 const initialState = {
     user: {
@@ -29,8 +30,9 @@ const initialState = {
 
 export const getUserThunk = createAsyncThunk(
     'userSlice/getUserThunk',
-    async (uid, {dispatch, rejectWithValue}) => {
+    async (uid, {rejectWithValue}) => {
         try {
+            await setFirstEntry();
             return await userService.getUser(uid);
         } catch (e) {
             console.log(e);

@@ -1,4 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url "https://artifactory.img.ly/artifactory/imgly" }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.10"
+        classpath 'ly.img.android.sdk:plugin:9.2.0'
+    }
+}
 
 buildscript {
     ext {
@@ -40,5 +50,11 @@ allprojects {
         google()
         maven { url 'https://www.jitpack.io' }
         maven { url 'https://maven.google.com' }
+    }
+}
+
+allprojects {
+    repositories {
+        maven { url 'https://artifactory.img.ly/artifactory/imgly' }
     }
 }

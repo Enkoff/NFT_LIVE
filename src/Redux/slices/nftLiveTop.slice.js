@@ -7,16 +7,16 @@ const initialState = {
     isLoading: false,
     error: null
 };
-export const getNftLiveTopByLimitThunk = createAsyncThunk(
-    'nftLiveTopSlice/getNftLiveTopByLimitThunk',
-    async ({limit}, {rejectWithValue}) => {
-        try {
-            return await nftLiveTopService.getNftLiveTopByLimit(limit);
-        } catch (e) {
-            return rejectWithValue(e.message);
-        }
-    }
-);
+// export const getNftLiveTopByLimitThunk = createAsyncThunk(
+//     'nftLiveTopSlice/getNftLiveTopByLimitThunk',
+//     async ({limit}, {rejectWithValue}) => {
+//         try {
+//             return await nftLiveTopService.getNftLiveTopByLimit(limit);
+//         } catch (e) {
+//             return rejectWithValue(e.message);
+//         }
+//     }
+// );
 export const getNftLiveTopByStartAfterThunk = createAsyncThunk(
     'nftLiveTopSlice/getNftLiveTopByStartAfterThunk',
     async ({startAfter, limit, callback}, {dispatch, rejectWithValue}) => {
@@ -122,18 +122,18 @@ const nftLiveTopSlice = createSlice({
             });
         }
     },
-    extraReducers: {
-        [getNftLiveTopByLimitThunk.pending]: (state) => {
-            state.isLoading = true;
-        },
-        [getNftLiveTopByLimitThunk.fulfilled]: (state, action) => {
-            state.nftLiveTop = action.payload;
-            state.isLoading = false;
-        },
-        [getNftLiveTopByLimitThunk.rejected]: (state, action) => {
-            state.error = action.payload;
-        }
-    }
+    // extraReducers: {
+    //     [getNftLiveTopByLimitThunk.pending]: (state) => {
+    //         state.isLoading = true;
+    //     },
+    //     [getNftLiveTopByLimitThunk.fulfilled]: (state, action) => {
+    //         state.nftLiveTop = action.payload;
+    //         state.isLoading = false;
+    //     },
+    //     [getNftLiveTopByLimitThunk.rejected]: (state, action) => {
+    //         state.error = action.payload;
+    //     }
+    // }
 });
 
 const nftLiveTopReducer = nftLiveTopSlice.reducer;

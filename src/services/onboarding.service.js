@@ -6,6 +6,5 @@ export const onboardingService = {
         .collection(firestoreLib.onboarding.collection)
         .doc(firestoreLib.onboarding.doc)
         .get()
-        .then(response => response.data())
-        .then(onboarding => onboarding[firestoreLib.onboarding.arrayName])
+        .then(response => response.data()[firestoreLib.onboarding.arrayName])
 };
