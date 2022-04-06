@@ -12,6 +12,8 @@ import LoadingScreen from '../LoadingScreen/LoadingScreen';
 import {setFirsEntryThunk} from '../../Redux/slices/auth.slice';
 import {getAvatarsAndBgColorsThunk, getNftLiveTopThunk, getUserByUidThunk} from '../../Redux/slices';
 
+
+//РОІБРАТИСЬ З РЕНДЕРЕНГОМ!!!! ЇХ ДУЖЕ БАГАТО
 const HomeScreen = () => {
     const dispatch = useDispatch();
 
@@ -25,25 +27,24 @@ const HomeScreen = () => {
     const [isModal, setIsModal] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [isNextDataLoading, setIsNextDataLoading] = useState(true);
-    const [isInitialLoad, setIsInitialLoad] = useState(false);
 
     useEffect(() => {
         currentModalItem && setCurrentModalItem(filterData[filterData.findIndex(item => item.id === currentModalItem.id)]);
     }, [filterData, user]);
 
-    const initialFetch = async () => {
-        if (!isFirstEntry) await dispatch(setFirsEntryThunk());
-        if (uid) await dispatch(getUserByUidThunk(uid));
+    useEffect(() => {
+        if (!isFirstEntry) dispatch(setFirsEntryThunk());
+        if (nftLiveTop.length === 0) dispatch(getNftLiveTopThunk()).then(({payload}) => setFilterData(payload));
         if (avatars.length === 0) dispatch(getAvatarsAndBgColorsThunk());
-        await dispatch(getNftLiveTopThunk()).then(({payload}) => setFilterData(payload));
-        return true;
-    };
+    }, []);
 
     useEffect(() => {
-        initialFetch().then(res => setIsInitialLoad(res));
-    }, [uid, nftLiveTop]);
+        if (uid) dispatch(getUserByUidThunk({uid}));
+    }, [uid]);
 
-    if (!isInitialLoad) return <LoadingScreen/>;
+    useEffect(() => {
+        setFilterData(nftLiveTop);
+    }, [nftLiveTop]);
 
     const nextData = (lastPrice) => {
         // isNextDataLoading && dispatch(getNftLiveTopByStartAfterThunk({
@@ -53,9 +54,11 @@ const HomeScreen = () => {
         // }));
     };
 
+    if (!uid || nftLiveTop.length === 0 || avatars.length === 0) return <LoadingScreen/>;
+
     const onRefresh = async () => {
         setRefreshing(true);
-        await dispatch(getUserByUidThunk(uid));
+        await dispatch(getUserByUidThunk({uid}));
         await dispatch(getNftLiveTopThunk()).then(({payload}) => setFilterData(payload));
         currentModalItem && setCurrentModalItem(filterData[filterData.findIndex(item => item.id === currentModalItem.id)]);
         setRefreshing(false);

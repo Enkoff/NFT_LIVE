@@ -1,12 +1,14 @@
 import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-
-import {CustomButton, CustomText, CustomTextInput} from '../../index';
-import {SIZE, THEME} from '../../../constants';
-import {addAndDeleteCollectionNameThunk} from '../../../Redux/slices';
 import {Formik} from 'formik';
+
+import {SIZE, THEME} from '../../../constants';
+import {addAndDeleteCollectionNameByUidThunk} from '../../../Redux/slices';
 import {addCollectionNameScheme} from '../../../config';
+
+import {collectionNameModel} from '../../../model';
+import {CustomButton, CustomText, CustomTextInput} from '../../index';
 
 const AddCollectionModal = ({setIsNewCollectionModal}) => {
     const dispatch = useDispatch();
@@ -22,6 +24,7 @@ const AddCollectionModal = ({setIsNewCollectionModal}) => {
     };
 
     const submit = async ({collectionName}) => {
+        setIsConfirm(true);
         const isNameExist = collectionsNames.some(item => item.collectionName === collectionName);
 
         if (isNameExist) {
@@ -34,10 +37,10 @@ const AddCollectionModal = ({setIsNewCollectionModal}) => {
             return;
         }
 
-        setIsConfirm(true);
-        await dispatch(addAndDeleteCollectionNameThunk({uid: id, collectionName, isAdd: true}));
-        setIsConfirm(false);
+        const newCollectionObj = new collectionNameModel({collectionName});
+        await dispatch(addAndDeleteCollectionNameByUidThunk({uid: id, collectionObj: newCollectionObj}));
 
+        setIsConfirm(false);
         setIsNewCollectionModal(false);
     };
 

@@ -4,9 +4,8 @@ import {useSelector} from 'react-redux';
 import {RootScreenTemplate} from '../../Components';
 import {snapshotService} from '../../services';
 import {SearchHeader, Users} from '../../Components/SearchScreenComponent';
-import {getUserThunk} from '../../Redux/slices';
 
-const SearchScreen = (props) => {
+const SearchScreen = () => {
     const {user: {id}} = useSelector(state => state['user']);
 
     const [userFilterData, setUserFilterData] = useState([]);

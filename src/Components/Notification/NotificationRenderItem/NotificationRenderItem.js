@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, View, TouchableOpacity, Image} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 
 import {CustomText} from '../../index';
 import {SIZE, THEME} from '../../../constants';
@@ -9,13 +9,9 @@ import {getTime} from '../../../config/module/getTime';
 
 const RenderMessageItem = ({item}) => {
     const dispatch = useDispatch();
-
-    const {uid} = useSelector(state => state['auth']);
     const {id, imgUrl, imgBg, title, date, subTitle} = item;
 
-    const deleteItem = () => {
-        dispatch(deletePushNotificationThunk({uid, pushId: id}));
-    };
+    const deleteItem = () => dispatch(deletePushNotificationThunk({pushId: id}));
 
     return (
         <TouchableOpacity activeOpacity={.6} onLongPress={deleteItem}>

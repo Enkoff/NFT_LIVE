@@ -9,7 +9,7 @@ import {
     NftModalContent,
 } from '../../Components';
 import {Bio, ProfileHeader} from '../../Components/Profile';
-import {getUserThunk} from '../../Redux/slices';
+import {getUserByUidThunk} from '../../Redux/slices';
 
 const ProfileScreen = () => {
     const dispatch = useDispatch();
@@ -48,7 +48,7 @@ const ProfileScreen = () => {
 
     const onRefresh = async () => {
         setRefreshing(true);
-        await dispatch(getUserThunk(id));
+        await dispatch(getUserByUidThunk({uid: id}));
         setRefreshing(false);
     };
 

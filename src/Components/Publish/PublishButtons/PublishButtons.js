@@ -3,77 +3,57 @@ import {StyleSheet, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 
+import {SIZE, THEME} from '../../../constants';
+import {addNftThunk, addGalleryItem} from '../../../Redux/slices';
+import {PublishSaveModel} from '../../../model';
 import {CustomButton} from '../../index';
 import {createGalleryItem} from '../../../config/firebase';
-import {SIZE, THEME} from '../../../constants';
-import {
-    addAndDeleteGalleryItemThunk,
-    addAndDeleteNftTopItemThunk
-} from '../../../Redux/slices';
-import {PublishSaveModel} from '../../../model';
-import {firestore} from '../../../config/firebase/firebase.config';
 
 const PublishButtons = ({formData, carouselRef}) => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
 
-    const {uid} = useSelector(state => state['auth']);
     const {user} = useSelector(state => state['user']);
     const {publish} = useSelector(state => state['publish']);
 
-    const [isButtonsLoading, setIsButtonsLoading] = useState({isSave: false, isPublish: false});
+    const [isSave, setIsSave] = useState(false);
+    const [isPublish, setIsPublish] = useState(false);
+
 
     const saveHandler = async () => {
-        setIsButtonsLoading(prevState => {
-            return {...prevState, isSave: true};
-        });
-
+        setIsSave(true);
         const galleryItem = await createGalleryItem(user, formData, [PublishSaveModel]);
-        await dispatch(addAndDeleteGalleryItemThunk({uid, galleryItem}));
 
-        setIsButtonsLoading(prevState => {
-            return {...prevState, isSave: false};
-        });
+        await dispatch(addNftThunk({galleryItem, isNftLiveTop: false}));
+        await dispatch(addGalleryItem({galleryItem}));
 
+        setIsSave(false);
         navigation.navigate('ProfileStackNav');
     };
 
     const publishHandler = async () => {
-        //ЗАПИС ПО НОВОМУ В БАЗУ!!!
+        setIsPublish(true);
         const publishObj = publish[carouselRef.current._activeItem];
-        const isNftLive = publishObj.name === 'NFT Live';
 
-        const galleryItem = await createGalleryItem(user, formData, [PublishSaveModel, publishObj], isNftLive);
+        if (publishObj.name !== 'Comming Soon') {
+            const isNftLive = publishObj.name === 'NFT Live';
 
-        await firestore()
-            .collection('nft')
-            .add(galleryItem);
+            const galleryItem = await createGalleryItem(user, formData, [PublishSaveModel, publishObj], isNftLive);
+            await dispatch(addGalleryItem({galleryItem}));
 
-        // const publishObj = publish[carouselRef.current._activeItem];
-        //
-        // setIsButtonsLoading(prevState => {
-        //     return {...prevState, isPublish: true};
-        // });
-        //
-        // const galleryItem = await createGalleryItem(user, formData, [PublishSaveModel, publishObj]);
-        //
-        // await dispatch(addAndDeleteGalleryItemThunk({uid, galleryItem}));
-        //
-        // if (publishObj.name === 'NFT Live') {
-        //     await dispatch(addAndDeleteNftTopItemThunk({galleryItem}));
-        // }
-        //
-        // setIsButtonsLoading(prevState => {
-        //     return {...prevState, isPublish: false};
-        // });
-        //
-        // navigation.navigate('ProfileStackNav');
+            isNftLive
+                ? await dispatch(addNftThunk({galleryItem, isNftLiveTop: true}))
+                : await dispatch(addNftThunk({galleryItem, isNftLiveTop: false}));
+
+            navigation.navigate('ProfileStackNav');
+        }
+        setIsPublish(false);
     };
 
     return (
         <View style={styles.btnWrapper}>
             <CustomButton
-                isLoading={isButtonsLoading.isSave}
+                isLoading={isSave}
                 onPress={saveHandler}
                 name={'Save to gallery'}
                 wrapperStyle={styles.buttonsWrapper}
@@ -81,7 +61,7 @@ const PublishButtons = ({formData, carouselRef}) => {
                 style={styles.saveBtn}
             />
             <CustomButton
-                isLoading={isButtonsLoading.isPublish}
+                isLoading={isPublish}
                 onPress={publishHandler}
                 wrapperStyle={styles.buttonsWrapper}
                 name={'Publish'}

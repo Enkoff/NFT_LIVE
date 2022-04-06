@@ -4,9 +4,8 @@ import {useSelector} from 'react-redux';
 import {AvatarAndTitle, RootScreenTemplate} from '../../Components';
 import {Chats, ChatSearchBar, HorizontalFriendsCarousel} from '../../Components/Chat';
 import {authService, snapshotService} from '../../services';
-import {getUserThunk} from '../../Redux/slices';
 
-const ChatScreen = (props) => {
+const ChatScreen = () => {
     const {uid} = useSelector(state => state['auth']);
 
     const [subscriptions, setSubscriptions] = useState([]);
@@ -44,7 +43,7 @@ const ChatScreen = (props) => {
         >
             <ChatSearchBar callback={filterHandler}/>
             <HorizontalFriendsCarousel subscriptions={filterSubscriptions}/>
-            <Chats subscriptions={subscriptions}/>
+            <Chats subscriptions={filterSubscriptions}/>
         </RootScreenTemplate>
     );
 };

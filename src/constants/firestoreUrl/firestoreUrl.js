@@ -55,6 +55,12 @@ export const firestoreLib = {
     },
     where: {
         isNftLiveTop: 'isNftLiveTop',
-        authorId: 'authorId'
+        authorId: 'authorId',
+        collectionName: 'collectionName',
+        id: 'id',
+        userId: 'userId'
+    },
+    notifications: {
+        collection: 'notifications'
     }
 };

@@ -5,3 +5,4 @@ export * from './module/setPushBadge';
 export * from './module/addIsShow';
 export * from './module/deletePushBadge';
 export * from './module/nftSellEnded';
+export * from './module/createSubscriptionsObjects';

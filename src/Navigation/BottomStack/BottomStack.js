@@ -26,6 +26,7 @@ const CreateNft = () => null;
 const BottomStackNav = ({route: {params}}) => {
     const dispatch = useDispatch();
     const {uid} = useSelector(state => state['auth']);
+
     const [messagesBadge, setMessagesBadge] = useState(null);
     const [notificationBadge, setNotificationBadge] = useState(null);
 

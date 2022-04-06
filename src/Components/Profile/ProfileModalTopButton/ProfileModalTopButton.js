@@ -2,13 +2,15 @@ import React, {useState} from 'react';
 import {StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 
-import {DeleteSvg, EditSvg, SaveSvg} from '../../SVG';
-import SvgIconBtn from '../../IconButton/SvgIconButton';
 import {SIZE, THEME} from '../../../constants';
 import {
-    addAndDeleteGalleryItemThunk, addAndDeleteNftTopItemThunk,
-    updateGalleryItemThunk
+    updateNftByNftIdThunk,
+    updateGalleryItemByItemId,
+    deleteNft,
+    deleteGalleryItemByItemId,
 } from '../../../Redux/slices';
+import {DeleteSvg, EditSvg, SaveSvg} from '../../SVG';
+import SvgIconBtn from '../../IconButton/SvgIconButton';
 
 const ProfileModalTopButton = (
     {
@@ -19,23 +21,17 @@ const ProfileModalTopButton = (
         setIsModal
     }
 ) => {
-    const {id: itemId, publish} = item;
-
     const dispatch = useDispatch();
+    const {id: itemId, publish, nftFirebasePath} = item;
+
     const [isSave, setIsSave] = useState(false);
     const [isDelete, setIsDelete] = useState(false);
-    const {uid} = useSelector(state => state['auth']);
 
     const deleteHandler = async () => {
         setIsDelete(true);
 
-        await dispatch(addAndDeleteGalleryItemThunk({uid, galleryItem: item, isAdd: false}));
-
-        const isPublishInNftLiveTop = item.publish.some(item => item.name === 'NFT Live');
-
-        if (isPublishInNftLiveTop) {
-            await dispatch(addAndDeleteNftTopItemThunk({galleryItem: item, isAdd: false}));
-        }
+        await dispatch(deleteNft({itemId, nftFirebasePath}));
+        await dispatch(deleteGalleryItemByItemId({itemId}));
 
         setIsDelete(false);
         setIsModal(false);
@@ -44,7 +40,8 @@ const ProfileModalTopButton = (
     const saveHandler = async () => {
         setIsSave(true);
 
-        await dispatch(updateGalleryItemThunk({uid, itemId, inputs}));
+        await dispatch(updateGalleryItemByItemId({itemId, updateFields: inputs}));
+        await dispatch(updateNftByNftIdThunk({nftId: itemId, updateFields: inputs}));
 
         setIsSave(false);
         setIsEditMode(false);

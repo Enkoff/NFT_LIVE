@@ -2,27 +2,44 @@ import React, {useState} from 'react';
 import {Keyboard, StyleSheet, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 
+import {SIZE, THEME} from '../../../constants';
+import {
+    addAndDeleteCollectionNameByUidThunk,
+    updateCollectionNameByUidAndItemIdThunk,
+    updateNftByCollectionNameThunk
+} from '../../../Redux/slices';
 import {DeleteSvg, EditSvg, SaveSvg} from '../../SVG';
 import SvgIconBtn from '../../IconButton/SvgIconButton';
-import {SIZE, THEME} from '../../../constants';
-import {addAndDeleteCollectionNameThunk, updateCollectionNameThunk} from '../../../Redux/slices';
 
 const InputButtons = ({item, newName, isEditMode, setIsEditMode, setIsFocus}) => {
     const dispatch = useDispatch();
-    const [isDelete, setIsDelete] = useState(false);
-    const [isSave, setIsSave] = useState(false);
     const {uid} = useSelector(state => state['auth']);
 
-    //ПОРІБНО ВИДАЛИТИ ВСІ НФТ
+    const [isDelete, setIsDelete] = useState(false);
+    const [isSave, setIsSave] = useState(false);
+
+    // ПОТРІБНО ВИДАЛИТИ ВСІ НФТ ЩО Є В КОЛЕКЦІЇ ТА СТВОРИТИ МОДАЛЬНЕ ВІКНО З ЗАПРОСОМ ВИДАЛЕННЯ!!!!
     const deleteHandler = async () => {
         setIsDelete(true);
-        await dispatch(addAndDeleteCollectionNameThunk({uid, collectionNameRemoveObj: item, isAdd: false}));
+        await dispatch(addAndDeleteCollectionNameByUidThunk({uid, collectionObj: item, isAdd: false}));
         setIsDelete(false);
     };
 
     const saveHandler = async () => {
         setIsSave(true);
-        await dispatch(updateCollectionNameThunk({uid, newName, item}));
+
+        await dispatch(updateCollectionNameByUidAndItemIdThunk({
+            uid,
+            newName,
+            collectionId: item.id,
+            oldCollectionName: item.collectionName
+        }));
+        await dispatch(updateNftByCollectionNameThunk({
+            uid,
+            newName,
+            oldCollectionName: item.collectionName
+        }));
+
         setIsSave(false);
         Keyboard.dismiss();
         setIsEditMode(false);

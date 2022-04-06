@@ -3,13 +3,13 @@ import {useState} from 'react';
 import {StyleSheet, TextInput, View} from 'react-native';
 import {useSelector} from 'react-redux';
 
-import {SearchSvg} from '../SVG';
 import {ROOT_STYLE, SIZE, THEME} from '../../constants';
+import {SearchSvg} from '../SVG';
 
 const Search = ({setFilterData, currentFilterName = 'authorNikName'}) => {
     const [searchQuery, setSearchQuery] = useState('');
 
-    const {nftLiveTop} = useSelector(state => state['nftLiveTop']);
+    const {nftLiveTop} = useSelector(state => state['nft']);
 
     const onChangeSearch = query => {
         setSearchQuery(query);

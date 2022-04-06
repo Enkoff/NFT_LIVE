@@ -25,18 +25,26 @@ const MainTopContent = (
     const {id, subscriptions} = user;
 
     const [isFollow, setIsFollow] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const followUnfollowHandler = async () => {
-        dispatch(followUnfollowThunk({userId: id, followUserId: authorId, item, user}));
+        setIsLoading(true);
+        const followUser = {
+            followUserId: item.authorId,
+            followUserAvatarUrl: item.authorAvatar,
+            followUserAvatarBackground: item.authorBackground,
+            followUserNikName: item.authorNikName
+        };
+        await dispatch(followUnfollowThunk({user, followUser, isFollow}));
+
+        setIsLoading(false);
+        setIsFollow(prev => !prev);
     };
 
     useEffect(() => {
-        const isFollow = subscriptions.some(item => item.id === authorId);
-
-        if (isFollow) {
-            setIsFollow(true);
-        } else {
-            setIsFollow(false);
+        if (!isLoading) {
+            const isFollow = subscriptions.some(item => item.id === authorId);
+            isFollow ? setIsFollow(true) : setIsFollow(false);
         }
     }, [subscriptions]);
 
@@ -59,8 +67,8 @@ const MainTopContent = (
                     setIsModal={setIsModal}
                 />
             </View>
-            {id !== authorId &&
-            <CustomButton
+            {id !== authorId && <CustomButton
+                isLoading={isLoading}
                 name={isFollow ? 'Unfollow' : 'Follow'}
                 onPress={followUnfollowHandler}
                 wrapperStyle={styles.followBtn}

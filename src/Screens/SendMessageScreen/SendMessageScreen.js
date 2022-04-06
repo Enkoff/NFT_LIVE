@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {View} from 'react-native';
 
 import {AvatarAndTitle, CenterLinerGradient} from '../../Components';
@@ -6,6 +6,8 @@ import MessagesList from '../../Components/SendMessage/MessageList/MessageList';
 import SendMessageBar from '../../Components/SendMessage/SendMessageBar/SendMessageBar';
 
 const SendMessageScreen = ({route: {params: {chatCompanion}}}) => {
+    const messagesRef = useRef();
+
     return (
         <View style={{flex: 1}}>
             <CenterLinerGradient/>
@@ -14,8 +16,8 @@ const SendMessageScreen = ({route: {params: {chatCompanion}}}) => {
                 isButton={true}
                 chatCompanion={chatCompanion}
             />
-            <MessagesList chatCompanionId={chatCompanion.id}/>
-            <SendMessageBar chatCompanionId={chatCompanion.id}/>
+            <MessagesList messagesRef={messagesRef}  chatCompanionId={chatCompanion.id}/>
+            <SendMessageBar messagesRef={messagesRef} chatCompanionId={chatCompanion.id}/>
         </View>
     );
 };

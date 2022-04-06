@@ -1,35 +1,34 @@
 import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 
+import {SIZE, THEME} from '../../../constants';
+import {deleteGalleryItemByItemId, deleteNft} from '../../../Redux/slices';
 import SvgIconBtn from '../../IconButton/SvgIconButton';
 import {DeleteSvg} from '../../SVG';
-import {SIZE, THEME} from '../../../constants';
-import {addAndDeleteGalleryItemThunk, addAndDeleteNftTopItemThunk} from '../../../Redux/slices';
 
+//ПОФИКСИТИ УТЕЧКУ ПАМЯТІ
 const GalleryItem = ({item}) => {
     const dispatch = useDispatch();
+
+    const {id: itemId, nftImgUrl, nftFirebasePath} = item;
     const [isDelete, setIsDelete] = useState(false);
-    const {user: {id}} = useSelector(state => state['user']);
 
     const deleteHandler = async () => {
         setIsDelete(true);
-        await dispatch(addAndDeleteGalleryItemThunk({uid: id, galleryItem: item, isAdd: false}));
 
-        const isPublishInNftLiveTop = item.publish.some(item => item.name === 'NFT Live');
+        await dispatch(deleteNft({itemId, nftFirebasePath}));
+        await dispatch(deleteGalleryItemByItemId({itemId}));
 
-        if (isPublishInNftLiveTop) {
-            await dispatch(addAndDeleteNftTopItemThunk({galleryItem: item, isAdd: false}));
-        }
         setIsDelete(false);
     };
 
     return (
         <View style={styles.imgContainer}>
             <FastImage
-                style={{width: '100%', height: '100%'}}
-                source={{uri: item.nftImgUrl, priority: FastImage.priority.high}}
+                style={styles.fastImg}
+                source={{uri: nftImgUrl, priority: FastImage.priority.high}}
                 resizeMode={FastImage.resizeMode.cover}
             />
             <SvgIconBtn isLoading={isDelete} onPress={deleteHandler} wrapperStyle={styles.deleteBtn}>
@@ -52,6 +51,10 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: SIZE.height.h8,
         right: SIZE.height.h8
+    },
+    fastImg: {
+        width: '100%',
+        height: '100%'
     }
 });
 

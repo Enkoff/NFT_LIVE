@@ -2,9 +2,9 @@ import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
+import {SIZE, THEME} from '../../../constants';
 import {NftImgAndButtons} from '../index';
 import ModalCloseButton from '../../ModalCloseButton/ModalCloseButton';
-import {SIZE, THEME} from '../../../constants';
 import MainContent from '../MainContent/MainContent';
 
 const NftModalContent = ({item, isProfile = false, setIsModal}) => {

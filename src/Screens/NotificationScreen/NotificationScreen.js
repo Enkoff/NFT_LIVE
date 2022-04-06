@@ -1,22 +1,26 @@
 import React, {useEffect, useState} from 'react';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import moment from 'moment';
 
 import {
     AvatarAndTitle,
     RootScreenTemplate
 } from '../../Components';
 import {FaqBtn, Notifications} from '../../Components/Notification';
-import {snapshotService, userService} from '../../services';
+import {snapshotService} from '../../services';
+import {deletePushNotificationBadgeThunk} from '../../Redux/slices';
 
 const NotificationScreen = ({navigation}) => {
-    const {uid} = useSelector(state => state['auth']);
+    const dispatch = useDispatch();
 
+    const {uid} = useSelector(state => state['auth']);
     const [notifications, setNotifications] = useState([]);
+    const [dates, setDates] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
 
     useEffect(() => {
         return navigation.addListener('focus', () => {
-            userService.deleteMessageBadge(uid);
+            dispatch(deletePushNotificationBadgeThunk({uid}));
         });
     }, []);
 
@@ -24,12 +28,21 @@ const NotificationScreen = ({navigation}) => {
         return snapshotService.getNotifications(uid, setNotifications);
     }, []);
 
+    useEffect(() => {
+        const dates = notifications.map(item => moment(item.date).format('DD/MM/YY'));
+        const uniqueDates = [...new Set(dates)];
+
+        setDates(uniqueDates);
+    }, [notifications]);
+
     const onRefresh = async () => {
         setRefreshing(true);
-        const unsubscribe = await navigation.addListener('focus', () => {
-            userService.deleteMessageBadge(uid);
-        });
+
         await snapshotService.getNotifications(uid, setNotifications);
+        const unsubscribe = await navigation.addListener('focus', () => {
+            dispatch(deletePushNotificationBadgeThunk({uid}));
+        });
+
         setRefreshing(false);
         navigation.removeListener(unsubscribe);
     };
@@ -41,7 +54,7 @@ const NotificationScreen = ({navigation}) => {
             onRefresh={onRefresh}
         >
             <FaqBtn/>
-            <Notifications notifications={notifications}/>
+            <Notifications dates={dates} notifications={notifications}/>
         </RootScreenTemplate>
     );
 };

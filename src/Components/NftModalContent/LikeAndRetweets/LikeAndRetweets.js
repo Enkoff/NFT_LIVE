@@ -1,9 +1,9 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 
+import {SIZE} from '../../../constants';
 import {HeartSvg, ShareSvg} from '../../SVG';
 import CustomText from '../../CustomText/CustomText';
-import {SIZE} from '../../../constants';
 import {changeNumber} from '../../../config';
 
 const LikeAndRetweets = ({item: {likes, retweets}}) => {

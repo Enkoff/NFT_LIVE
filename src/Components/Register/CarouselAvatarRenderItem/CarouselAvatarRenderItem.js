@@ -8,11 +8,10 @@ import {EditAvatarColorSvg, UpdateSvg} from '../../SVG';
 import {SIZE} from '../../../constants';
 import {
     setCurrentAvatarId,
-    updateAllGalleryItemThunk,
-    updateNftLiveTopItemByAuthorIdThunk,
-    updateUserAvatarThunk
+    updateGalleryItemByFields,
+    updateNftByAuthorIdAndFieldsKeyThunk,
+    updateUserByUidAndFieldsKeysThunk
 } from '../../../Redux/slices';
-
 
 const CarouselAvatarRenderItem = ({item: {id, initialBg, imgURL}, setIsPopup, isEditProfile, isPopup}) => {
     const dispatch = useDispatch();
@@ -27,12 +26,13 @@ const CarouselAvatarRenderItem = ({item: {id, initialBg, imgURL}, setIsPopup, is
     const uploadHandler = async () => {
         setIsUpload(true);
 
-        await dispatch(updateUserAvatarThunk({uid, initialBg, imgURL}));
-        await dispatch(updateAllGalleryItemThunk({uid, fields: {authorAvatar: imgURL, authorBackground: initialBg}}));
-        await dispatch(updateNftLiveTopItemByAuthorIdThunk({
-            authorId: uid,
-            fields: {authorAvatar: imgURL, authorBackground: initialBg}
-        }));
+        const nftUpdateFields = {authorAvatar: imgURL, authorBackground: initialBg};
+        const userUpdateFields = {avatarUrl: imgURL, avatarBackground: initialBg};
+
+        //ТУТ ПОТРІБНО ПРОПИСАТИ ЯКИЙСБ КОМБАЙН ДЛЯ ЦИХ ДИСПАТЧІВ
+        await dispatch(updateUserByUidAndFieldsKeysThunk({uid, updateFields: userUpdateFields}));
+        await dispatch(updateGalleryItemByFields({updateFields: nftUpdateFields}));
+        await dispatch(updateNftByAuthorIdAndFieldsKeyThunk({uid, updateFields: nftUpdateFields}));
 
         setIsUpload(false);
     };

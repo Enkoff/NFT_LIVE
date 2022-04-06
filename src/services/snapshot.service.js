@@ -3,53 +3,46 @@ import {firestoreLib} from '../constants';
 import {setPushBadge} from '../config';
 
 export const snapshotService = {
-    getNotifications: (id, callback) => firestore()
-        .collection(firestoreLib.users.collection)
-        .doc(id)
+    getNotifications: (uid, callback) => firestore()
+        .collection(firestoreLib.notifications.collection)
+        .where(firestoreLib.where.userId, '==', uid)
         .onSnapshot(snapshot => {
-            const pushMessage = snapshot.data().pushMessages;
-            callback(pushMessage);
+            const tmp = [];
+            snapshot.docs.forEach(el => {
+                tmp.push(el.data());
+            });
+            const sortNotification = tmp.sort((a, b) => b.date - a.date);
+            callback(sortNotification);
         }),
     getMessageBadge: (uid, setBadge) => firestore()
-        .collection(firestoreLib.users.collection)
-        .doc(uid)
+        .collection(firestoreLib.notifications.collection)
+        .where(firestoreLib.where.userId, '==', uid)
         .onSnapshot(snapshot => {
-            const badge = setPushBadge(snapshot.data().pushMessages);
+            const tmp = [];
+            snapshot.docs.forEach(el => {
+                tmp.push(el.data());
+            });
+
+            const badge = setPushBadge(tmp);
             badge > 0 ? setBadge(badge) : setBadge(null);
         }),
-    getAllNotShowChatsMessageBadge: (uid, setBadge) => firestore()
-        .collection(firestoreLib.users.collection)
-        .doc(uid)
-        .onSnapshot(snapshot => {
-            const badge = snapshot.data().notShowMessage;
-            badge > 0 ? setBadge(badge) : setBadge(null);
-        }),
-    // getNftLiveTop: (callback) => firestore()
-    //     .collection(firestoreLib.nftLiveTop.collection)
-    //     .doc(firestoreLib.nftLiveTop.doc)
-    //     .onSnapshot(snapshot => {
-    //         const nftLiveTop = snapshot.data()[firestoreLib.nftLiveTop.arrayName];
-    //         callback(nftLiveTop);
-    //     }),
-    // getNftLiveTop: (callback, startAfter = '', setLoading) => {
-    //     firestore().collection('nft').onSnapshot(async () => {
-    //         const data = [];
-    //         const response = (await firestore()
-    //             .collection('nft')
-    //             .orderBy('ethPrice')
-    //             .startAfter(startAfter)
-    //             .limit(2)
-    //             .where('isNftLiveTop', '==', true)
-    //             .get()).docs;
-    //         response.forEach(el => {
-    //             data.push(el.data());
-    //         });
-    //         callback(prev => [...prev, ...data]);
-    //         if (data.length === 0) {
-    //             // setLoading(false);
-    //         }
-    //     });
-    // },
+    getAllNotShowChatsMessageBadge: (uid, setBadge) => {
+        firestore()
+            .collection(firestoreLib.chats.collection)
+            .onSnapshot(snapshot => {
+                let badge = null;
+                snapshot.docs.forEach(chat => {
+                    if (chat.id.indexOf(uid) === 0) {
+                        chat.data().chat.forEach(el => {
+                            if (el.userId !== uid && !el.isShow) {
+                                badge += 1;
+                            }
+                        });
+                    }
+                });
+                setBadge(badge);
+            });
+    },
     getUsers: (uid, callback, callbackTwo) => firestore()
         .collection(firestoreLib.users.collection)
         .onSnapshot(snapshot => {
@@ -67,22 +60,6 @@ export const snapshotService = {
             });
             const filterUser = users.sort((a, b) => a.nikName - b.nikName);
 
-            //TEST
-            // const arr = [
-            //     ...filterUser,
-            //     ...filterUser,
-            //     ...filterUser,
-            //     ...filterUser,
-            //     ...filterUser,
-            //     ...filterUser,
-            //     ...filterUser,
-            //     ...filterUser,
-            //     ...filterUser,
-            //     ...filterUser,
-            //     ...filterUser,
-            //     ...filterUser,
-            // ];
-            /////////////////////////
             callback(filterUser);
             callbackTwo && callbackTwo(filterUser);
         }),
@@ -103,16 +80,6 @@ export const snapshotService = {
         .collection(firestoreLib.users.collection)
         .doc(uid)
         .onSnapshot(snapshot => {
-            // const arr = [
-            //     ...snapshot.data().subscriptions,
-            //     ...snapshot.data().subscriptions,
-            //     ...snapshot.data().subscriptions,
-            //     ...snapshot.data().subscriptions,
-            //     ...snapshot.data().subscriptions,
-            //     ...snapshot.data().subscriptions,
-            //     ...snapshot.data().subscriptions,
-            //     ...snapshot.data().subscriptions,
-            // ];
             callback(snapshot.data().subscriptions);
             callbackTwo(snapshot.data().subscriptions);
         }),

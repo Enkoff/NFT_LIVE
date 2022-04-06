@@ -3,6 +3,7 @@ import {v4 as uuidv4} from 'uuid';
 export class pushModel {
     constructor(options) {
         this.id = uuidv4();
+        this.userId = options.userId;
         this.isShow = false;
         this.date = Date.now();
         this.imgUrl = options.imgUrl;

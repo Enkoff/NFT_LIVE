@@ -1,9 +1,11 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import {CustomText} from '../../index';
-import {SIZE} from '../../../constants';
+import {StyleSheet, Text, View} from 'react-native';
 
-const Message = ({time, isLeft, message}) => {
+import {CustomText} from '../../index';
+import {SIZE, THEME} from '../../../constants';
+import moment from 'moment';
+
+const Message = ({date, isLeft, message, isNewDate}) => {
     const isOnLeft = type => {
         if (isLeft && type === 'messageContainer') {
             return {
@@ -16,16 +18,21 @@ const Message = ({time, isLeft, message}) => {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={[styles.messageContainer, isOnLeft('messageContainer')]}>
-                <View style={styles.messageView}>
-                    <CustomText textStyle={styles.message}>{message}</CustomText>
-                </View>
-                <View style={styles.timeView}>
-                    <CustomText textStyle={styles.time}>{time}</CustomText>
+        <>
+            <View style={styles.container}>
+                <View style={[styles.messageContainer, isOnLeft('messageContainer')]}>
+                    <View style={styles.messageView}>
+                        <CustomText textStyle={styles.message}>{message}</CustomText>
+                    </View>
+                    <View style={styles.timeView}>
+                        <CustomText textStyle={styles.time}>
+                            {moment(date).format('HH:mm')}
+                        </CustomText>
+                    </View>
                 </View>
             </View>
-        </View>
+            {isNewDate && <Text style={styles.date}>{moment(date).format('DD/MM/YY')}</Text>}
+        </>
     );
 };
 
@@ -60,6 +67,12 @@ const styles = StyleSheet.create({
     time: {
         fontSize: SIZE.fontSize.fs12,
         color: 'rgba(255, 255, 255, 0.6)'
+    },
+    date: {
+        color: THEME.white40,
+        textAlign: 'center',
+        marginVertical: SIZE.height.h16,
+        fontWeight: 'bold',
     }
 });
 

@@ -4,11 +4,10 @@ import {
     authReducer,
     avatarCarouselReducer,
     nftReducer,
-    nftLiveTopReducer,
     onboardingReducer,
     userReducer,
     faqReducer,
-    publishReducer
+    publishReducer,
 } from '../slices';
 
 const store = configureStore({
@@ -17,10 +16,9 @@ const store = configureStore({
         avatar: avatarCarouselReducer,
         user: userReducer,
         auth: authReducer,
-        nftLiveTop: nftLiveTopReducer,
         faq: faqReducer,
         publish: publishReducer,
-        nft: nftReducer
+        nft: nftReducer,
     },
     middleware: getDefaultMiddleware => getDefaultMiddleware({
         serializableCheck: false

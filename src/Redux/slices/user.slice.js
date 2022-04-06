@@ -1,9 +1,7 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 
 import {userService} from '../../services';
-import {addAvatarToFirebaseStorage} from '../../config/firebase';
-import {collectionNameModel} from '../../model';
-import {subscriptionsAndSubscribersModel} from '../../model/subscriptionsAndSubscribersModel/subscriptionsAndSubscribersModel';
+import {createSubscriptionsObjects} from '../../config';
 
 const initialState = {
     user: {
@@ -28,11 +26,11 @@ const initialState = {
 };
 
 export const getUserByUidThunk = createAsyncThunk(
-    'userSlice/getUserByIdThunk',
-    async (uid, {rejectWithValue}) => {
+    'userSlice/getUserByUidThunk',
+    async ({uid}, {rejectWithValue}) => {
         try {
-            const user = await userService.getUserByUid(uid);
-            const userGallery = await userService.getUserGalleryById(uid);
+            const user = await userService.getUserByUid({uid});
+            const userGallery = await userService.getUserGalleryByUid({uid});
             return {user, userGallery};
         } catch (e) {
             console.log(e);
@@ -40,351 +38,215 @@ export const getUserByUidThunk = createAsyncThunk(
         }
     }
 );
-export const updateUserInfoByUidThunk = createAsyncThunk(
-    'userSlice/updateUserInfoByUidThunk',
-    async ({uid, fields, isNikNameUpdate}, {dispatch, rejectWithValue}) => {
+export const updateUserByUidAndFieldsKeysThunk = createAsyncThunk(
+    'userSlice/updateUserByUidAndFieldsKeysThunk',
+    async ({uid, updateFields, oldAvatarFileName = null, isUploadAvatar = false}, {dispatch, rejectWithValue}) => {
         try {
-            await userService.updateUserInfoByUid(uid, fields);
-            dispatch(updateUserInfo({fields}));
-            isNikNameUpdate && dispatch(updateGalleryItemNikName({fields}));
+            if (isUploadAvatar) await userService.deleteStorageImg(oldAvatarFileName);
+
+            dispatch(updateUserByFields({updateFields}));
+            await userService.updateUserByUidAndFields({uid, updateFields});
         } catch (e) {
             console.log(e);
             return rejectWithValue(e.message);
         }
     }
 );
-export const updateUserAvatarByUidThunk = createAsyncThunk(
-    'userSlice/updateUserAvatarByUidThunk',
-    async ({uid,}, {dispatch, rejectWithValue}) => {
+export const addAndDeleteCollectionNameByUidThunk = createAsyncThunk(
+    'userSlice/addAndDeleteCollectionNameByUidThunk',
+    async ({uid, collectionObj, isAdd = true}, {dispatch, rejectWithValue}) => {
         try {
-            // if (!isCarouselAvatar) {
-                // if (oldAvatarFileName) await userService.deleteStorageImg(oldAvatarFileName);
-                //
-                // const {storageImgURL, imgStoragePath} = await addAvatarToFirebaseStorage(uid, imgURL);
-                // await userService.updateAvatarAndAvatarStoragePath(uid, initialBg, storageImgURL, imgStoragePath);
-                //
-                // dispatch(updateUserAvatar({initialBg, imgURL: storageImgURL, oldAvatarFileName: imgStoragePath}));
-                // return storageImgURL;
-            // } else {
-                // await userService.updateUserAvatarAndBgColor(uid, initialBg, imgURL);
-                //
-                // dispatch(updateUserAvatar({initialBg, imgURL, oldAvatarFileName}));
-            // }
+            if (isAdd) {
+                await userService.addAndDeleteCollectionNameByUid({isAdd, uid, collectionObj});
+                dispatch(addAndDeleteCollectionName({isAdd, collectionObj}));
+                return;
+            }
+            await userService.addAndDeleteCollectionNameByUid({isAdd, uid, collectionObj});
+            dispatch(addAndDeleteCollectionName({isAdd, collectionObj}));
         } catch (e) {
             console.log(e);
             return rejectWithValue(e.message);
         }
     }
 );
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-// export const addAndDeleteGalleryItemThunk = createAsyncThunk(
-//     'userSlice/addAndDeleteGalleryItemThunk',
-//     async ({uid, galleryItem, isAdd = true}, {dispatch, rejectWithValue}) => {
-//         try {
-//             await userService.addAndDeleteGalleryItem(uid, galleryItem, isAdd);
-//             if (!isAdd) {
-//                 await userService.deleteStorageImg(galleryItem.nftFirebasePath);
-//             }
-//             dispatch(addAndDeleteGalleryItem({galleryItem, isAdd}));
-//         } catch (e) {
-//             console.log(e);
-//             return rejectWithValue(e.message);
-//         }
-//     }
-// );
-// export const addAndDeleteLikeThunk = createAsyncThunk(
-//     'userSlice/addAndDeleteLikeThunk',
-//     async ({itemId, userId, authorId, isAdd = true}, {dispatch, rejectWithValue}) => {
-//         try {
-//             await userService.addAndDeleteGalleryItemLike(itemId, userId, authorId, isAdd);
-//             dispatch(addAndDeleteLike({itemId, userId, authorId, isAdd}));
-//         } catch (e) {
-//             return rejectWithValue(e.message);
-//         }
-//     }
-// );
-// export const addRetweetThunk = createAsyncThunk(
-//     'userSlice/addRetweetThunk',
-//     async ({authorId, itemId}, {dispatch, rejectWithValue}) => {
-//         try {
-//             await userService.addRetweetsGalleryItem(authorId, itemId);
-//             //ЧОМУСЬ ДОДАЄ ДРУШИЙ РЕТВІТ ВИДАЛИТИ
-//             dispatch(addRetweet({authorId, itemId}));
-//         } catch (e) {
-//             console.log(e);
-//             return rejectWithValue(e.message);
-//         }
-//     }
-// );
-// export const updateGalleryItemThunk = createAsyncThunk(
-//     'userSlice/updateGalleryItemThunk',
-//     async ({uid, itemId, inputs}, {dispatch, rejectWithValue}) => {
-//         try {
-//             await userService.updateGalleryItem(uid, itemId, inputs);
-//             dispatch(updateGalleryItem({itemId, inputs}));
-//         } catch (e) {
-//             console.log(e);
-//             return rejectWithValue(e.message);
-//         }
-//     }
-// );
-// export const updateUserAvatarThunk = createAsyncThunk(
-//     'userSlice/updateUserAvatarThunk',
-//     async ({uid, initialBg, imgURL, isCarouselAvatar = true, oldAvatarFileName}, {dispatch, rejectWithValue}) => {
-//         try {
-//             if (!isCarouselAvatar) {
-//                 if (oldAvatarFileName) await userService.deleteStorageImg(oldAvatarFileName);
-//
-//                 const {storageImgURL, imgStoragePath} = await addAvatarToFirebaseStorage(uid, imgURL);
-//                 await userService.updateAvatarAndAvatarStoragePath(uid, initialBg, storageImgURL, imgStoragePath);
-//
-//                 dispatch(updateUserAvatar({initialBg, imgURL: storageImgURL, oldAvatarFileName: imgStoragePath}));
-//                 return storageImgURL;
-//             } else {
-//                 await userService.updateUserAvatarAndBgColor(uid, initialBg, imgURL);
-//
-//                 dispatch(updateUserAvatar({initialBg, imgURL, oldAvatarFileName}));
-//             }
-//         } catch (e) {
-//             console.log(e);
-//             return rejectWithValue(e.message);
-//         }
-//     }
-// );
-// export const updateAllGalleryItemThunk = createAsyncThunk(
-//     'userSlice/updateAllGalleryItemThunk',
-//     async ({uid, fields}, {dispatch, rejectWithValue}) => {
-//         try {
-//             await userService.updateAllGalleryItem(uid, fields);
-//             dispatch(updateAllGalleryItem({fields}));
-//         } catch (e) {
-//             console.log(e);
-//             return rejectWithValue(e.message);
-//         }
-//     }
-// );
-// export const addAndDeleteCollectionNameThunk = createAsyncThunk(
-//     'userSlice/addAndDeleteCollectionNameThunk',
-//     async ({uid, collectionNameRemoveObj, collectionName, isAdd = true}, {dispatch, rejectWithValue}) => {
-//         try {
-//
-//             if (isAdd) {
-//                 const collectionNameObj = new collectionNameModel({collectionName});
-//
-//                 await userService.addAndDeleteCollectionName(uid, collectionNameObj, isAdd);
-//                 dispatch(addAndDeleteCollectionName({isAdd, collectionNameObj}));
-//             } else {
-//                 await userService.addAndDeleteCollectionName(uid, collectionNameRemoveObj, isAdd);
-//                 dispatch(addAndDeleteCollectionName({isAdd, collectionNameRemoveObj}));
-//             }
-//         } catch (e) {
-//             console.log(e);
-//             return rejectWithValue(e.message);
-//         }
-//     }
-// );
-// export const updateCollectionNameThunk = createAsyncThunk(
-//     'userSlice/updateCollectionNameThunk',
-//     async ({uid, item, newName}, {dispatch, rejectWithValue}) => {
-//         try {
-//             await userService.updateCollectionName(uid, item, newName);
-//             dispatch(updateCollectionName({item, newName}));
-//         } catch (e) {
-//             console.log(e);
-//             return rejectWithValue(e.message);
-//         }
-//     }
-// );
-// export const followUnfollowThunk = createAsyncThunk(
-//     'userSlice/followUnfollowThunk',
-//     async ({userId, followUserId, item, user}, {dispatch, rejectWithValue}) => {
-//         try {
-//             const {
-//                 authorAvatar,
-//                 avatarUrl,
-//                 authorNikName,
-//                 nikName,
-//                 authorId,
-//                 id,
-//                 authorBackground,
-//                 avatarBackground,
-//             } = item;
-//
-//             const {
-//                 id: userId,
-//                 nikName: userNikName,
-//                 avatarUrl: userAvatar,
-//                 avatarBackground: userAvatarBackground
-//             } = user;
-//
-//             const userChatId = `${userId}${followUserId}`;
-//             const companionChatId = `${followUserId}${userId}`;
-//
-//             const followObj = new subscriptionsAndSubscribersModel({
-//                 id: authorId || id,
-//                 nikName: authorNikName || nikName,
-//                 avatarUrl: authorAvatar || avatarUrl,
-//                 avatarBackground: authorBackground || avatarBackground,
-//                 chatId: companionChatId
-//             });
-//
-//             const userObj = new subscriptionsAndSubscribersModel({
-//                 id: userId,
-//                 nikName: userNikName,
-//                 avatarUrl: userAvatar,
-//                 avatarBackground: userAvatarBackground,
-//                 chatId: userChatId
-//             });
-//
-//             await userService.followUnfollow(userId, followUserId, followObj, userObj);
-//
-//             await userService.addChat(userChatId, companionChatId);
-//             dispatch(followUnfollow({followUserId, followObj}));
-//         } catch (e) {
-//             console.log(e);
-//             return rejectWithValue(e.message);
-//         }
-//     }
-// );
-// export const deletePushNotificationThunk = createAsyncThunk(
-//     'userSlice/deletePushNotificationThunk',
-//     async ({uid, pushId}, {rejectWithValue}) => {
-//         try {
-//             await userService.updateNotificationByUserId(uid, pushId);
-//         } catch (e) {
-//             console.log(e);
-//             return rejectWithValue(e.message);
-//         }
-//     }
-// );
-// export const addChatMessageThunk = createAsyncThunk(
-//     'userSlice/addChatMessageThunk',
-//     async ({uid, chatCompanionId, newMessage}, {rejectWithValue}) => {
-//         try {
-//             await userService.addChatMessage(uid, chatCompanionId, newMessage);
-//         } catch (e) {
-//             console.log(e);
-//             return rejectWithValue(e.message);
-//         }
-//     }
-// );
-// export const setShowMessageThunk = createAsyncThunk(
-//     'userSlice/setShowMessageThunk',
-//     async ({uid, chatCompanionId}, {rejectWithValue}) => {
-//         try {
-//             await userService.setShowMessage(uid, chatCompanionId);
-//         } catch (e) {
-//             console.log(e);
-//             return rejectWithValue(e.message);
-//         }
-//     }
-// );
+export const updateCollectionNameByUidAndItemIdThunk = createAsyncThunk(
+    'userSlice/updateCollectionNameByUidAndItemIdThunk',
+    async ({uid, collectionId, newName, oldCollectionName}, {dispatch, rejectWithValue}) => {
+        try {
+            await userService.updateCollectionName({uid, collectionId, newName});
+            dispatch(updateUserCollectionName({collectionId, newName}));
+            dispatch(updateGalleryItemByCollectionName({oldCollectionName, newName}));
+        } catch (e) {
+            console.log(e);
+            return rejectWithValue(e.message);
+        }
+    }
+);
+
+export const followUnfollowThunk = createAsyncThunk(
+    'userSlice/followUnfollowThunk',
+    async ({user, followUser, isFollow}, {dispatch, rejectWithValue}) => {
+        try {
+            const {userObj, followUserObj} = createSubscriptionsObjects(user, followUser);
+
+            if (isFollow) {
+                dispatch(deleteSubscriptions({followUserId: followUser.followUserId}));
+                await userService.unfollow({userObj, followUserObj});
+                return;
+            }
+
+            dispatch(addSubscriptions({followUserObj}));
+            await userService.follow({userObj, followUserObj});
+        } catch (e) {
+            console.log(e);
+            return rejectWithValue(e.message);
+        }
+    }
+);
+
+export const setShowMessageThunk = createAsyncThunk(
+    'userSlice/setShowMessageThunk',
+    async ({uid, chatCompanionId}, {rejectWithValue}) => {
+        try {
+            await userService.setShowMessage(uid, chatCompanionId);
+        } catch (e) {
+            console.log(e);
+            return rejectWithValue(e.message);
+        }
+    }
+);
+
+export const addChatMessageThunk = createAsyncThunk(
+    'userSlice/addChatMessageThunk',
+    async ({uid, chatCompanionId, newMessage}, {rejectWithValue}) => {
+        try {
+            await userService.addChatMessage({uid, chatCompanionId, newMessage});
+        } catch (e) {
+            const errorCode = 'firestore/not-found';
+            if (e.code === errorCode) {
+               await userService.addChat({uid, chatCompanionId, newMessage});
+            }
+            return rejectWithValue(e.message);
+        }
+    }
+);
+
+export const deletePushNotificationThunk = createAsyncThunk(
+    'userSlice/deletePushNotificationThunk',
+    async ({pushId}, {rejectWithValue}) => {
+        try {
+            await userService.deletePushNotificationByPushId({pushId});
+        } catch (e) {
+            console.log(e);
+            return rejectWithValue(e.message);
+        }
+    }
+);
+
+export const deletePushNotificationBadgeThunk = createAsyncThunk(
+    'userSlice/deletePushNotificationBadgeThunk',
+    async ({uid}, {rejectWithValue}) => {
+        try {
+            await userService.deleteMessageBadge({uid});
+            // await userService.deletePushNotificationByPushId({pushId});
+        } catch (e) {
+            console.log(e);
+            return rejectWithValue(e.message);
+        }
+    }
+);
+
+
+
 
 const userSlice = createSlice({
     name: 'userSlice',
     initialState,
     reducers: {
-        updateUserInfo: (state, action) => {
-            const {fields} = action.payload;
+        addGalleryItem: (state, action) => {
+            const {galleryItem} = action.payload;
 
-            for (const key in fields) {
-                state.user[key] = fields[key];
-            }
+            state.user.gallery.unshift(galleryItem);
         },
-        updateGalleryItemNikName: (state, action) => {
-            const {nikName} = action.payload.fields;
-            console.log('updateUSerNikName');
-            state.user.gallery.map(nft => {
-                nft.authorNikName = nikName;
-                return nft;
-            });
+        addSubscriptions: (state, action) => {
+            const {followUserObj,} = action.payload;
+
+            state.user.subscriptions.push(followUserObj);
         },
-        ///////////////////////////////
-        addAndDeleteGalleryItem: (state, action) => {
-            const {galleryItem, isAdd} = action.payload;
+        addAndDeleteCollectionName: (state, action) => {
+            const {isAdd, collectionObj} = action.payload;
+
             if (isAdd) {
-                state.user.gallery.push(galleryItem);
-            } else {
-                state.user.gallery = state.user.gallery.filter(item => item.id !== galleryItem.id);
+                state.user.collectionsNames.push(collectionObj);
+                return;
+            }
+            state.user.collectionsNames = state.user.collectionsNames.filter(item => item.id !== collectionObj.id);
+        },
+        addGalleryItemRetweetByItemId: (state, action) => {
+            const {itemId} = action.payload;
+
+            const index = state.user.gallery.findIndex(item => item.id === itemId);
+            state.user.gallery[index].retweets += 1;
+        },
+        addAndDeleteLikeByGalleryItemId: (state, action) => {
+            const {isAdd, itemId, uid} = action.payload;
+
+            const index = state.user.gallery.findIndex(item => item.id === itemId);
+            isAdd
+                ? state.user.gallery[index].likes.push(uid)
+                : state.user.gallery[index].likes = state.user.gallery[index].likes.filter(item => item !== uid);
+        },
+        updateUserByFields: (state, action) => {
+            const {updateFields} = action.payload;
+
+            for (const key in updateFields) {
+                state.user[key] = updateFields[key];
             }
         },
-        addAndDeleteLike: (state, action) => {
-            const {itemId, userId, authorId, isAdd} = action.payload;
+        updateUserCollectionName: (state, action) => {
+            const {collectionId, newName} = action.payload;
 
-            if (authorId === state.user.id) {
-                const itemIndex = state.user.gallery.findIndex(item => item.id === itemId);
-                if (isAdd) {
-                    const isLike = state.user.gallery[itemIndex].likes.some(likeId => likeId === userId);
-                    !isLike && state.user.gallery[itemIndex].likes.push(userId);
-                    return;
-                }
-                state.user.gallery[itemIndex].likes = state.user.gallery[itemIndex].likes.filter(item => item !== userId);
-            }
+            const itemIndex = state.user.collectionsNames.findIndex(item => item.id === collectionId);
+            state.user.collectionsNames[itemIndex].collectionName = newName;
         },
-        addRetweet: (state, action) => {
-            const {authorId, itemId} = action.payload;
+        updateGalleryItemByFields: (state, action) => {
+            const {updateFields} = action.payload;
 
-            if (authorId === state.user.id) {
-                const itemIndex = state.user.gallery.findIndex(item => item.id === itemId);
-                state.user.gallery[itemIndex].retweets += 1;
-            }
-        },
-        updateGalleryItem: (state, action) => {
-            const {itemId, inputs} = action.payload;
-
-            const itemIndex = state.user.gallery.findIndex(item => item.id === itemId);
-
-            for (let input in inputs) {
-                state.user.gallery[itemIndex][input] = inputs[input];
-            }
-        },
-        updateAllGalleryItem: (state, {payload: {fields}}) => {
             state.user.gallery.map(item => {
-                for (const key in fields) {
-                    item[key] = fields[key];
+                for (const key in updateFields) {
+                    item[key] = updateFields[key];
                 }
                 return item;
             });
         },
-        updateUserAvatar: (state, action) => {
-            const {initialBg, imgURL, oldAvatarFileName} = action.payload;
-
-            if (oldAvatarFileName) state.user.oldAvatarFileName = oldAvatarFileName;
-            state.user.avatarUrl = imgURL;
-            state.user.avatarBackground = initialBg;
-        },
-        addAndDeleteCollectionName: (state, action) => {
-            const {isAdd} = action.payload;
-            if (isAdd) {
-                const {collectionNameObj} = action.payload;
-                state.user.collectionsNames.push(collectionNameObj);
-            } else {
-                const {collectionNameRemoveObj: {id}} = action.payload;
-                state.user.collectionsNames = state.user.collectionsNames.filter(item => item.id !== id);
-            }
-        },
-        updateCollectionName: (state, action) => {
-            const {item: {id, collectionName}, newName} = action.payload;
-
-            const itemIndex = state.user.collectionsNames.findIndex(item => item.id === id);
-            state.user.collectionsNames[itemIndex].collectionName = newName;
+        updateGalleryItemByCollectionName: (state, action) => {
+            const {oldCollectionName, newName} = action.payload;
 
             state.user.gallery.map(item => {
-                if (item.collectionName === collectionName) {
+                if (item.collectionName === oldCollectionName) {
                     item.collectionName = newName;
                     return item;
                 }
                 return item;
             });
         },
-        followUnfollow: (state, {payload: {followUserId, followObj}}) => {
-            const isFollow = state.user.subscriptions.some(item => item.id === followUserId);
+        updateGalleryItemByItemId: (state, action) => {
+            const {itemId, updateFields} = action.payload;
 
-            if (isFollow) {
-                state.user.subscriptions = state.user.subscriptions.filter(item => item.id !== followUserId);
-            } else {
-                state.user.subscriptions.push(followObj);
+            const index = state.user.gallery.findIndex(item => item.id === itemId);
+            for (const key in updateFields) {
+                state.user.gallery[index][key] = updateFields[key];
             }
+        },
+        deleteGalleryItemByItemId: (state, action) => {
+            const {itemId} = action.payload;
+
+            state.user.gallery = state.user.gallery.filter(item => item.id !== itemId);
+        },
+        deleteSubscriptions: (state, action) => {
+            const {followUserId} = action.payload;
+
+            state.user.subscriptions = state.user.subscriptions.filter(item => item.id !== followUserId);
         },
     },
     extraReducers: {
@@ -405,19 +267,17 @@ const userSlice = createSlice({
 
 const userReducer = userSlice.reducer;
 export const {
-    updateUserInfo,
-    updateGalleryItemNikName,
-    ///////////////
-
-
-    addAndDeleteGalleryItem,
-    addAndDeleteLike,
-    addRetweet,
-    updateGalleryItem,
-    updateUserAvatar,
+    addGalleryItem,
+    addSubscriptions,
+    addAndDeleteLikeByGalleryItemId,
+    addGalleryItemRetweetByItemId,
     addAndDeleteCollectionName,
-    updateCollectionName,
-    updateAllGalleryItem,
-    followUnfollow
+    updateUserByFields,
+    updateUserCollectionName,
+    updateGalleryItemByFields,
+    updateGalleryItemByCollectionName,
+    updateGalleryItemByItemId,
+    deleteGalleryItemByItemId,
+    deleteSubscriptions
 } = userSlice.actions;
 export default userReducer;

@@ -5,22 +5,33 @@ import {Formik} from 'formik';
 
 import {SIZE} from '../../../constants';
 import {CustomButton, CustomTextInput} from '../../index';
-import {updateNftNikNamesByUserUidThunk, updateUserInfoByUidThunk} from '../../../Redux/slices';
+import {
+    updateGalleryItemByFields,
+    updateNftByAuthorIdAndFieldsKeyThunk,
+    updateUserByUidAndFieldsKeysThunk,
+} from '../../../Redux/slices';
 import {registrationValidationScheme} from '../../../config';
 import {editProfileFormValidation} from '../../../config/validation';
 
 const EditProfileForm = () => {
     const dispatch = useDispatch();
-    const [isSave, setIsSave] = useState(false);
     const {user: {id, name, nikName, email, bio}} = useSelector(state => state['user']);
+
     const [isDisabledSubmitBtn, setIsDisabledSubmitBtn] = useState(true);
+    const [isSave, setIsSave] = useState(false);
 
     const submit = async (values) => {
-        const isNikNameUpdate = nikName !== values.nikName;
         setIsSave(true);
 
-        dispatch(updateUserInfoByUidThunk({uid: id, fields: values, isNikNameUpdate}));
-        isNikNameUpdate && await dispatch(updateNftNikNamesByUserUidThunk({uid: id, nikName: values.nikName}));
+        const isNikNameUpdate = nikName !== values.nikName;
+
+        await dispatch(updateUserByUidAndFieldsKeysThunk({uid: id, updateFields: values}));
+
+        if (isNikNameUpdate) {
+            const galleryItemUpdateField = {authorNikName: values.nikName};
+            await dispatch(updateNftByAuthorIdAndFieldsKeyThunk({uid: id, updateFields: galleryItemUpdateField}));
+            await dispatch(updateGalleryItemByFields({updateFields: galleryItemUpdateField}));
+        }
 
         setIsSave(false);
         Keyboard.dismiss();

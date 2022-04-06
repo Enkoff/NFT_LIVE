@@ -5,15 +5,14 @@ import {useSelector} from 'react-redux';
 import CollectionNameInput from '../CollectionNameInput/CollectionNameInput';
 import {SIZE} from '../../../constants';
 import Gallery from '../Gallery/Gallery';
-import {KeyboardASV} from '../../Register';
 
-const EditGalleryAndCollectionName = (props) => {
-    const {user: {gallery, collectionsNames}} = useSelector(state => state['user']);
+const EditGalleryAndCollectionName = () => {
+    const {user: {collectionsNames}} = useSelector(state => state['user']);
     const [filterCollectionName, setFilterCollectionName] = useState([]);
 
     useEffect(() => {
         const collection = collectionsNames.filter(item => item.collectionName !== 'All NFT');
-        setFilterCollectionName(collection);
+        setFilterCollectionName(collection.reverse());
     }, [collectionsNames]);
 
     return (

@@ -16,16 +16,28 @@ const User = ({user: currentUser}) => {
     const {user} = useSelector(state => state['user']);
 
     const {id: itemUserId, avatarBackground, avatarUrl, nikName} = currentUser;
-    const {id, subscriptions} = user;
+    const {subscriptions} = user;
 
     const [isFollow, setIsFollow] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const userHandler = () => {
         navigation.navigate('WatchUserDetailScreen', {user: {id: itemUserId, avatarUrl, avatarBackground, nikName}});
     };
 
-    const followHandler = () => {
-        dispatch(followUnfollowThunk({userId: id, followUserId: itemUserId, item: currentUser, user}));
+    const followHandler = async () => {
+        setIsLoading(true);
+        const followUser = {
+            followUserId: itemUserId,
+            followUserAvatarUrl: avatarUrl,
+            followUserAvatarBackground: avatarBackground,
+            followUserNikName: nikName
+        };
+
+        await dispatch(followUnfollowThunk({user, followUser, isFollow}));
+
+        setIsLoading(false);
+        setIsFollow(prev => !prev);
     };
 
     const sendMessage = () => {
@@ -33,12 +45,9 @@ const User = ({user: currentUser}) => {
     };
 
     useEffect(() => {
-        const isFollow = subscriptions.some(item => item.id === itemUserId);
-
-        if (isFollow) {
-            setIsFollow(true);
-        } else {
-            setIsFollow(false);
+        if (!isLoading) {
+            const isFollow = subscriptions.some(item => item.id === itemUserId);
+            isFollow ? setIsFollow(true) : setIsFollow(false);
         }
     }, [subscriptions]);
 
@@ -63,6 +72,7 @@ const User = ({user: currentUser}) => {
                     <MessageSvg width={SIZE.height.h24} height={SIZE.height.h24}/>
                 </SvgIconButton>
                 <CustomButton
+                    isLoading={isLoading}
                     onPress={followHandler}
                     name={isFollow ? 'Unfollow' : 'Follow'}
                     wrapperStyle={styles.followWrapper}

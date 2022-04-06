@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, StyleSheet, View} from 'react-native';
+import {FlatList, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNetInfo} from '@react-native-community/netinfo';
 
@@ -8,38 +8,37 @@ import {snapshotService} from '../../../services';
 import {setShowMessageThunk} from '../../../Redux/slices';
 import NoInternetConnection from '../../NoIternetConnection/NoInternetConnection';
 
-
-const MessagesList = ({chatCompanionId}) => {
+const MessagesList = ({chatCompanionId, messagesRef}) => {
     const dispatch = useDispatch();
-    const {uid} = useSelector(state => state['auth']);
-    const [messages, setMessages] = useState([]);
     const netInfo = useNetInfo();
 
+    const {uid} = useSelector(state => state['auth']);
+    const [messages, setMessages] = useState([]);
+
     useEffect(() => {
-        return getMessage();
+        const chatId = `${uid}${chatCompanionId}`;
+        return snapshotService.getChatMessages(chatId, setMessages);
     }, []);
 
     useEffect(() => {
-        if (messages.length !== 0) {
-            dispatch(setShowMessageThunk({uid, chatCompanionId}));
-        }
-    }, [messages]);
+        messagesRef.current = messages;
+    },[messages]);
 
-    const getMessage = () => {
-        snapshotService.getChatMessages(`${uid}${chatCompanionId}`, setMessages);
-    }
+    useEffect(() => {
+        if (messages.length !== 0) dispatch(setShowMessageThunk({uid, chatCompanionId}));
+    }, [messages]);
 
     return (
         <View style={{flex: 1}}>
             <FlatList
                 data={messages}
                 inverted
-                ke
-                renderItem={({item: {message, time, userId}}) => (
+                keyExtractor={item => item.id}
+                renderItem={({item: {message, date, userId, isNewDate}}) => (
                     <Message
-                        keyExtractor={item => item.id}
+                        isNewDate={isNewDate}
                         message={message}
-                        time={time}
+                        date={date}
                         isLeft={userId !== uid}
                     />
                 )}

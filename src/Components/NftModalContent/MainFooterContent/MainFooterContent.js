@@ -1,48 +1,46 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
 
 import RootModalInput from '../RootModalInput/RootModalInput';
 import Price from '../Price/Price';
 import {SIZE} from '../../../constants';
 import CustomButton from '../../CustomBotton/CustomButton';
-import {firestore} from '../../../config/firebase/firebase.config';
 
 const MainFooterContent = ({inputs, changeInput, isEditMode, onBlurInput, item}) => {
     const {sold, id, authorId} = item;
 
     //ПЕРЕПИСАТИ!!!!!
     const buyHandler = async () => {
-        const userRef = await firestore().collection('users').doc(authorId);
-        const nftLiveTop = await firestore().collection('nft_live_top').doc('nftLiveTop');
-
-        await firestore().runTransaction(transaction => {
-            return transaction.get(userRef).then(doc => {
-                const updateGallery = doc.data().gallery;
-                updateGallery.map(item => {
-                    if (item.id === id) {
-                        item.sold = true;
-                        return item;
-                    }
-                    return item;
-                });
-                transaction.update(userRef, {'gallery': updateGallery});
-            });
-        });
-
-        await firestore().runTransaction(transaction => {
-            return transaction.get(nftLiveTop).then(doc => {
-                const updateGallery = doc.data().nftLiveTopArray;
-                updateGallery.map(item => {
-                    if (item.id === id) {
-                        item.sold = true;
-                        return item;
-                    }
-                    return item;
-                });
-                transaction.update(nftLiveTop, {'nftLiveTopArray': updateGallery});
-            });
-        });
+        // const userRef = await firestore().collection('users').doc(authorId);
+        // const nftLiveTop = await firestore().collection('nft_live_top').doc('nftLiveTop');
+        //
+        // await firestore().runTransaction(transaction => {
+        //     return transaction.get(userRef).then(doc => {
+        //         const updateGallery = doc.data().gallery;
+        //         updateGallery.map(item => {
+        //             if (item.id === id) {
+        //                 item.sold = true;
+        //                 return item;
+        //             }
+        //             return item;
+        //         });
+        //         transaction.update(userRef, {'gallery': updateGallery});
+        //     });
+        // });
+        //
+        // await firestore().runTransaction(transaction => {
+        //     return transaction.get(nftLiveTop).then(doc => {
+        //         const updateGallery = doc.data().nftLiveTopArray;
+        //         updateGallery.map(item => {
+        //             if (item.id === id) {
+        //                 item.sold = true;
+        //                 return item;
+        //             }
+        //             return item;
+        //         });
+        //         transaction.update(nftLiveTop, {'nftLiveTopArray': updateGallery});
+        //     });
+        // });
     };
 
     return (

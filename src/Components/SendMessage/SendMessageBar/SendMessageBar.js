@@ -9,29 +9,35 @@ import {TopArrowSvg} from '../../SVG';
 import {MessageModel} from '../../../model';
 import {addChatMessageThunk} from '../../../Redux/slices';
 
-const SendMessageBar = ({chatCompanionId}) => {
+const SendMessageBar = ({chatCompanionId, messagesRef}) => {
     const dispatch = useDispatch();
     const netInfo = useNetInfo();
-    const {uid} = useSelector(state => state['auth']);
 
+    const {uid} = useSelector(state => state['auth']);
     const [message, setMessage] = useState('');
 
     const sendMessageHandler = () => {
-        const newMessage = new MessageModel({
-            userId: uid,
-            time: moment().format('LT'),
-            message
-        });
-        if (message) {
-            if (netInfo.isConnected) {
-                dispatch(addChatMessageThunk({uid, chatCompanionId, newMessage}));
-                setMessage('');
+        const currentDate = moment().format('DD/MM/YY');
+        let lastMessageDate = null;
+        let newMessage = {};
+
+        if (messagesRef.current.length !== 0) {
+            lastMessageDate = moment(messagesRef.current[0].date).format('DD/MM/YY');
+        }
+
+        if (message && netInfo.isConnected) {
+            if (lastMessageDate === null || lastMessageDate !== currentDate) {
+                newMessage = new MessageModel({userId: uid, message, isNewDate: true});
+            } else {
+                newMessage = new MessageModel({userId: uid, message, isNewDate: false});
             }
+            dispatch(addChatMessageThunk({uid, chatCompanionId, newMessage}));
+            setMessage('');
         }
     };
 
     return (
-        <KeyboardAvoidingView behavior={'padding'} style={styles.container}>
+        <KeyboardAvoidingView style={styles.container}>
             <View style={styles.innerContainer}>
                 <View style={styles.inputAndArrow}>
                     <TextInput

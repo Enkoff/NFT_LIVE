@@ -2,38 +2,42 @@ import React, {useEffect, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 
+import {SIZE, THEME} from '../../../../constants';
 import SvgIconButton from '../../../IconButton/SvgIconButton';
 import {HeartSvg, ShareSvg} from '../../../SVG';
-import {SIZE, THEME} from '../../../../constants';
 import {
-    addAndDeleteLikeThunk,
-    addAndDeleteNftLiveTopItemLikeThunk,
-    addRetweetsNftLiveTopItemThunk, addRetweetThunk,
+    addAndDeleteLikeThunkByNftId,
+    addNftRetweetByNftIdThunk,
+    addAndDeleteLikeByGalleryItemId,
+    addGalleryItemRetweetByItemId
 } from '../../../../Redux/slices';
 
 const NftLiveTopButton = ({item: {id, likes, authorId}}) => {
     const dispatch = useDispatch();
     const {uid} = useSelector(state => state['auth']);
     const [isLike, setIsLike] = useState(false);
+    const [isMyNft, setIsMyNft] = useState(null);
 
     useEffect(() => {
         const isUserLike = likes.some(itemId => itemId === uid);
+        const isMyNft = uid === authorId;
         setIsLike(isUserLike);
+        setIsMyNft(isMyNft);
     }, [likes]);
 
     const likeHandler = () => {
         if (isLike) {
-            dispatch(addAndDeleteNftLiveTopItemLikeThunk({itemId: id, userId: uid, isAdd: false}));
-            dispatch(addAndDeleteLikeThunk({itemId: id, userId: uid, authorId, isAdd: false}));
+            dispatch(addAndDeleteLikeThunkByNftId({isAdd: false, itemId: id, uid}));
+            isMyNft && dispatch(addAndDeleteLikeByGalleryItemId({isAdd: false, itemId: id, uid}));
         } else {
-            dispatch(addAndDeleteNftLiveTopItemLikeThunk({itemId: id, userId: uid}));
-            dispatch(addAndDeleteLikeThunk({itemId: id, userId: uid, authorId}));
+            dispatch(addAndDeleteLikeThunkByNftId({isAdd: true, itemId: id, uid}));
+            isMyNft && dispatch(addAndDeleteLikeByGalleryItemId({isAdd: true, itemId: id, uid}));
         }
     };
 
-    const shareHandler = () => {
-        dispatch(addRetweetsNftLiveTopItemThunk({itemId: id}));
-        dispatch(addRetweetThunk({authorId, itemId: id}));
+    const retweetsHandler = () => {
+        dispatch(addNftRetweetByNftIdThunk({nftId: id}));
+        isMyNft && dispatch(addGalleryItemRetweetByItemId({itemId: id}));
     };
 
     return (
@@ -42,7 +46,7 @@ const NftLiveTopButton = ({item: {id, likes, authorId}}) => {
                            wrapperStyle={[styles.saveBtn, {backgroundColor: isLike ? THEME.red : THEME.black50}]}>
                 <HeartSvg width={SIZE.height.h19} height={SIZE.height.h19}/>
             </SvgIconButton>
-            <SvgIconButton onPress={shareHandler} wrapperStyle={[styles.saveBtn, styles.shareSvg]}>
+            <SvgIconButton onPress={retweetsHandler} wrapperStyle={[styles.saveBtn, styles.shareSvg]}>
                 <ShareSvg width={SIZE.height.h19} height={SIZE.height.h19}/>
             </SvgIconButton>
         </>

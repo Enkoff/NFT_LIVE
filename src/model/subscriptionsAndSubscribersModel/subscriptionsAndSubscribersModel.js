@@ -1,4 +1,4 @@
-export class subscriptionsAndSubscribersModel {
+export class SubscriptionsAndSubscribersModel {
     constructor(options) {
         this.id = options.id;
         this.avatarUrl = options.avatarUrl;

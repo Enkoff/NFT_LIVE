@@ -2,7 +2,7 @@ import {addImgToFirebaseStorage} from './addImgToFirebaseStorage';
 import {nftSellEnded} from '../module/nftSellEnded';
 import {GalleryItemModel} from '../../model';
 
-export const createGalleryItem = async (user, formData, publish, isNftLiveTop) => {
+export const createGalleryItem = async (user, formData, publish, isNftLiveTop = false) => {
     const {id, avatarUrl, nikName, avatarBackground} = user;
     const {collectionName, nftName, bio, price, uploadImage} = formData;
 

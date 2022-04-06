@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {useSelector} from 'react-redux';
 
-import {SIZE, THEME} from '../../../constants';
+import {SIZE} from '../../../constants';
 import UploadImageRenderItem from './UploadImageRenderItem';
 import NotImageRenderItem from './NotImageRenderItem';
 

@@ -8,40 +8,46 @@ import {CloseSvg} from '../../../assets';
 import {SIZE, THEME} from '../../../constants';
 import {
     deleteUploadImage,
-    updateAllGalleryItemThunk,
-    updateNftLiveTopItemByAuthorIdThunk,
-    updateUserAvatarThunk
+    updateGalleryItemByFields,
+    updateNftByAuthorIdAndFieldsKeyThunk,
+    updateUserByUidAndFieldsKeysThunk
 } from '../../../Redux/slices';
 import {UpdateSvg} from '../../SVG';
+import {addAvatarToFirebaseStorage} from '../../../config/firebase';
 
 const UploadImageRenderItem = ({uploadImage, isEditProfile}) => {
     const dispatch = useDispatch();
+
     const {user: {id, avatarBackground, oldAvatarFileName, avatarUrl}} = useSelector(state => state['user']);
+
     const [isUpload, setIsUpload] = useState(false);
     const [isUploadIcon, setIsUploadIcon] = useState(false);
 
-    const deleteHandler = () => {
-        dispatch(deleteUploadImage());
-    };
 
     useEffect(() => {
-        if (uploadImage !== avatarUrl) {
-            setIsUploadIcon(true);
-        }
+        if (uploadImage !== avatarUrl) setIsUploadIcon(true);
     }, [uploadImage]);
 
     const uploadHandler = async () => {
         setIsUpload(true);
+        const {storageImgURL, imgStoragePath} = await addAvatarToFirebaseStorage(id, uploadImage);
 
-        const response = await dispatch(updateUserAvatarThunk({
+        const userUpdateFields = {
+            avatarUrl: storageImgURL,
+            avatarBackground: THEME.white5,
+            oldAvatarFileName: imgStoragePath
+        };
+        const nftUpdateFields = {authorAvatar: storageImgURL, authorBackground: THEME.white5};
+
+        //ТУТ ПОТРІБНО ПРОПИСАТИ ЯКИЙСБ КОМБАЙН ДЛЯ ЦИХ ДИСПАТЧІВ
+        await dispatch(updateUserByUidAndFieldsKeysThunk({
             uid: id,
-            imgURL: uploadImage,
-            isCarouselAvatar: false,
-            initialBg: THEME.white5,
+            updateFields: userUpdateFields,
+            isUploadAvatar: true,
             oldAvatarFileName
         }));
-        await dispatch(updateAllGalleryItemThunk({uid: id, fields: {authorAvatar: response.payload}}));
-        await dispatch(updateNftLiveTopItemByAuthorIdThunk({authorId: id, fields: {authorAvatar: response.payload}}));
+        await dispatch(updateGalleryItemByFields({updateFields: nftUpdateFields}));
+        await dispatch(updateNftByAuthorIdAndFieldsKeyThunk({uid: id, updateFields: nftUpdateFields}));
 
         setIsUpload(false);
         setIsUploadIcon(false);
@@ -54,7 +60,7 @@ const UploadImageRenderItem = ({uploadImage, isEditProfile}) => {
                 source={{uri: uploadImage, priority: FastImage.priority.high}}
                 resizeMode={FastImage.resizeMode.cover}
             />
-            <SvgIconButton onPress={deleteHandler} wrapperStyle={styles.closeSvgWrapper}>
+            <SvgIconButton onPress={() => dispatch(deleteUploadImage())} wrapperStyle={styles.closeSvgWrapper}>
                 <CloseSvg width={SIZE.height.h24} height={SIZE.height.h24}/>
             </SvgIconButton>
             {
